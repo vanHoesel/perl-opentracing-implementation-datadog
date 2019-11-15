@@ -1,64 +1,86 @@
-use lib '../lib';
-
 use strict;
 use warnings;
 
-use aliased 'OpenTracing::Implementation::DataDog::Tracer';
-use aliased 'OpenTracing::Implementation::DataDog::SpanContext';
 
-my $tracer = Tracer->new;
+use lib qw(lib ../lib);
 
-#use DDP; p $tracer->agent;
+use MyTracer;
+use OpenTracing::GlobalTracer qw/$T/;
+use Time::HiRes qw/sleep/;
 
+sub sleep_rand { sleep rand shift }
 
-my $span_context = SpanContext->new(
-    resource_name => 'some_resource',
-    service_name  => 'my_test_app',
-);
+my $span_context = $T->extract_context;
 
-#use DDP; p $span_context;
+my $scope = $T->start_active_span( "main", child_of => $span_context );
 
 do {
-    my $scope = $tracer->start_active_span( "Foo" , child_of => $span_context );
-    
+    my $scope = $T->start_active_span( "Foo" );
+#    my $scope = $T->start_active_span( "Foo" , child_of => $span_context );
+    sleep_rand 3;
     
     do {
-        my $scope1 = $tracer->start_active_span( "Bar1"  );
+        my $scope1 = $T->start_active_span( "Bar1"  );
+        
+        sleep_rand 3;
+        
         $scope1->close();
     };
     
+    sleep_rand 3;
     
     do {
-        my $scope2 = $tracer->start_active_span( "Bar2"  );
+        my $scope2 = $T->start_active_span( "Bar2"  );
         $scope2->get_span->set_baggage_item( extra => 'stuff');
         $scope2->get_span->set_tag( 'http.method' => 'GET' );
+        
+        sleep_rand 3;
+        
         do {
-            my $scope9 = $tracer->start_active_span( "Quux"  );
+            my $scope9 = $T->start_active_span( "Quux"  );
             $scope9->get_span->set_tag( 'db.instance' => "mysql.host");
+            
+            sleep_rand 3;
+            
             $scope9->close();
         };
-         $scope2->close();
+        
+        $scope2->close();
     };
     
+    sleep_rand 3;
     
     do {
-        my $scope3 = $tracer->start_active_span( "Bar3"  );
-#       $scope3->close();
+        my $scope3 = $T->start_active_span( "Bar3"  );
+        
+        sleep_rand 4;
+        
+        $scope3->close();
     };
     
+    sleep_rand 2;
     
     do {
-        my $scope4 = $tracer->start_active_span( "Bar4"  );
+        my $scope4 = $T->start_active_span( "Bar4"  );
+        
+        sleep_rand 4;
+        
         $scope4->close();
     };
     
 #   use DDP; p $scope;
 #   use DDP; p $scope->get_span;
     
+    sleep_rand 3;
+    
     $scope->close();
     
     undef $scope;
 };
+
+sleep_rand 3;
+
+$scope->close;
 
 sleep 0;
 

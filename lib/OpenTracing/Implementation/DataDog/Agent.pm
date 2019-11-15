@@ -116,8 +116,6 @@ sub _map_span_to_datadog_data {
         $context->get_baggage_items,
     };
     
-#use DDP; p $meta_data;
-
     my $data = {
         trace_id  => $context->trace_id,
         span_id   => $span->span_id,
@@ -156,17 +154,14 @@ sub _http_post_struct_as_json {
     my $struct = shift;
     
     my $encoded_data = $self->json_encode($struct);
+    do { use DDP; p $encoded_data }
+        if $ENV{OPENTRACING_DEBUG};
+    
     
     my $header = ['Content-Type' => 'application/json; charset=UTF-8'];
     my $rqst = HTTP::Request->new( 'POST', $self->uri, $header, $encoded_data );
-    
-    use DDP; p $rqst;
-    
-#   return if 0;
-    
+        
     my $resp = $self->user_agent->request( $rqst );
-    
-    use DDP; p $resp;
     
     return $resp;
 }

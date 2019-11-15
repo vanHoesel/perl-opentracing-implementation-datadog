@@ -37,19 +37,42 @@ use Moo;
 with 'OpenTracing::Role::Tracer';
 
 use aliased 'OpenTracing::Implementation::DataDog::Span';
+use aliased 'OpenTracing::Implementation::DataDog::SpanContext';
 use aliased 'OpenTracing::Implementation::DataDog::Agent';
 use aliased 'OpenTracing::Implementation::DataDog::ScopeManager';
 
 use Ref::Util qw/is_plain_hashref/;
-use Types::Standard qw/Object/;
+use Types::Standard qw/HashRef InstanceOf Maybe Object/;
 
 has agent => (
     is          => 'lazy',
     isa         => Object,
     handles     => [qw/send_span/],
-    coerce      => sub { is_plain_hashref $_[0] ? Agent->new( %{$_[0]} ) : $_[0] },
+    coerce
+    => sub { is_plain_hashref $_[0] ? Agent->new( %{$_[0]} ) : $_[0] },
     default     => sub { {} },
 );
+
+
+has default_context => (
+    is          => 'lazy',
+    isa
+    => Maybe[InstanceOf['OpenTracing::Implementation::DataDog::SpanContext']],
+    coerce
+    => sub { is_plain_hashref $_[0] ? SpanContext->new( %{$_[0]} ) : $_[0] },
+    default
+    => sub { { service_name => "????", resource_name => "????" } },
+    reader      => 'get_default_context',
+    writer      => 'set_default_context',
+);
+
+
+
+sub extract_context { $_[0]->get_default_context() }
+
+
+
+sub inject_context { ... }
 
 
 
@@ -86,7 +109,7 @@ sub build_span {
 sub _build_scope_manager {
     my $self = shift;
     
-    return ScopeManager->new( )
+    return ScopeManager->new( @_ )
 }
 
 1;

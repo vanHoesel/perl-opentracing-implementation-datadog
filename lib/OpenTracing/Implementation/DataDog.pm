@@ -1,6 +1,8 @@
 package OpenTracing::Implementation::DataDog;
 
 =head1 NAME
+use strict;
+use warnings;
 
 OpenTracing::Implementation::DataDog - A Global Tracer Implentation
 
@@ -11,13 +13,21 @@ OpenTracing::Implementation::DataDog - A Global Tracer Implentation
 use aliased 'OpenTracing::Implementation::DataDog::Tracer';
 
 
-sub bootstrap {
+sub bootstrap_tracer {
     my $implementation_class = shift;
     
     my @implementation_args  = @_;
     
     return Tracer->new( @implementation_args );
 }
+
+
+
+BEGIN {
+    use Role::Tiny::With;
+    with 'OpenTracing::Implementation::Interface::Bootstrap'
+        if $ENV{OPENTRACING_INTERFACE}
+} # check at compile time, perl -c will work
 
 
 

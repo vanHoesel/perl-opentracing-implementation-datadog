@@ -3,10 +3,10 @@ package OpenTracing::Implementation::DataDog;
 use strict;
 use warnings;
 
-
-
+our $VERSION = '0.01';
 
 use aliased 'OpenTracing::Implementation::DataDog::Tracer';
+
 
 
 sub bootstrap_tracer {

@@ -33,7 +33,7 @@ has closed_time => (
 sub _trigger_closed_time {
     my $self = shift;
     
-    croak "Can't close an alreade closed scope"
+    croak "Can't close an already closed scope"
             if $self->has_closed;
 }
 
@@ -67,7 +67,7 @@ sub DEMOLISH {
     
     return if $self->has_closed;
     
-    croak "Scope not programmetically closed before being demolished";
+    croak "Scope not programmatically closed before being demolished";
     #
     # below might be appreciated behaviour, but you should close yourself
     #

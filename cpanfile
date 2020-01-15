@@ -1,5 +1,5 @@
 requires        "OpenTracing::Role", '0.05';
-requires        "OpenTracing::Implementation::Interface::Bootstrap";
+requires        "OpenTracing::Implementation", '0.03';
 
 requires        "aliased";
 requires        "syntax";

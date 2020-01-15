@@ -1,12 +1,8 @@
 package OpenTracing::Implementation::DataDog;
 
-=head1 NAME
 use strict;
 use warnings;
 
-OpenTracing::Implementation::DataDog - A Global Tracer Implentation
-
-=cut
 
 
 

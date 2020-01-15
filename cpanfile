@@ -1,4 +1,4 @@
-requires        "OpenTracing::Role";
+requires        "OpenTracing::Role", '0.05';
 requires        "OpenTracing::Implementation::Interface::Bootstrap";
 
 requires        "aliased";

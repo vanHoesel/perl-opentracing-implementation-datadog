@@ -154,7 +154,7 @@ sub _http_post_struct_as_json {
     my $struct = shift;
     
     my $encoded_data = $self->json_encode($struct);
-    do { use DDP; p $encoded_data }
+    do { warn "$encoded_data\n" }
         if $ENV{OPENTRACING_DEBUG};
     
     

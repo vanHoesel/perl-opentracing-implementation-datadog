@@ -36,11 +36,18 @@ sub activate_span {
     my $self = shift;
     my $span = shift or croak "Missing OpenTracing Span";
     
-    my $finish_span_on_close = scalar( @_ ) ? !! shift : !undef;
-    #
-    # missing this (last) positional argument, means it defaults to 'true'
+    my $options = { @_ };
     
-    my $scope = $self->_build_scope( $span, $finish_span_on_close );
+    # remove the `finish_span_on_close` option, which is for this method only! 
+    my $finish_span_on_close = 
+        exists( $options->{ finish_span_on_close } ) ?
+            !! delete $options->{ finish_span_on_close }
+            : !undef
+    ; # use 'truthness' of param if provided, or set to 'true' otherwise
+    
+    my $scope = $self->_build_scope( $span,
+        finish_span_on_close => $finish_span_on_close
+    );
     
     $self->_set__active_scope( $scope );
     
@@ -52,7 +59,14 @@ sub activate_span {
 sub _build_scope {
     my $self = shift;
     my $span = shift;
-    my $finish_span_on_close = shift;
+    my $options = { @_ };
+    
+    # remove the `finish_span_on_close` option, which is for this method only! 
+    my $finish_span_on_close = 
+        exists( $options->{ finish_span_on_close } ) ?
+            !! delete $options->{ finish_span_on_close }
+            : !undef
+    ; # use 'truthness' of param if provided, or set to 'true' otherwise
     
     my $current_scope = $self->get_active_scope;
     

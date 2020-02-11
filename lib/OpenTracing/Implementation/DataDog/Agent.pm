@@ -104,26 +104,41 @@ sub send_span {
 }
 
 
-
-sub _map_span_to_datadog_data {
+# to_struct
+#
+# Gather required data from the span and it's context, tags and baggage items.
+# this data structure is specific for sending it through the DataDog agent and
+# therefore can not be a intance method of the Span object.
+#
+sub to_struct {
     my $class = shift;
     my $span = shift;
     
     my $context = $span->get_context();
     
+    my %baggage_items = $context->get_baggage_items();
+    
+    my %datadog_items = (
+        resource  => delete $baggage_items{ resource_name },
+        service   => delete $baggage_items{ service_name },
+        trace_id  => delete $baggage_items{ trace_id },
+        type      => delete $baggage_items{ service_type },
+    );
+    
     my $meta_data = {
         $span->get_tags,
-        $context->get_baggage_items,
+        %baggage_items
     };
     
     my $data = {
-        trace_id  => $context->trace_id,
+        
+        trace_id  => $datadog_items{trace_id},
         span_id   => $span->span_id,
-        resource  => $context->resource_name,
-        service   => $context->service_name,
+        resource  => $datadog_items{resource},
+        service   => $datadog_items{service},
         
         maybe
-        type      => $context->service_type,
+        type      => $datadog_items{type},
         
         name      => $span->operation_name,
         start     => $span->nano_seconds_start_time(),

@@ -2,7 +2,6 @@ use Test::Most;
 
 BEGIN {
     use_ok('OpenTracing::Implementation::DataDog');
-    use_ok('OpenTracing::Implementation::DataDog::Agent');
     use_ok('OpenTracing::Implementation::DataDog::Scope');
     use_ok('OpenTracing::Implementation::DataDog::ScopeManager');
     use_ok('OpenTracing::Implementation::DataDog::Span');

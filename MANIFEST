@@ -16,3 +16,5 @@ Makefile.PL
 MANIFEST
 README.md
 t/00_use_ok.t
+t/Agent/00_use_ok.t
+t/SpanContext/00_use_ok.t

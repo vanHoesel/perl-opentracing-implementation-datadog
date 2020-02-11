@@ -1,4 +1,4 @@
-requires        "OpenTracing::Role", '0.05';
+requires        "OpenTracing::Role", '0.06';
 requires        "OpenTracing::Implementation", '0.03';
 
 requires        "Carp";

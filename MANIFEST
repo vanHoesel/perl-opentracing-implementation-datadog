@@ -18,3 +18,4 @@ README.md
 t/00_use_ok.t
 t/Agent/00_use_ok.t
 t/SpanContext/00_use_ok.t
+t/SpanContext/01_constructor_new.t

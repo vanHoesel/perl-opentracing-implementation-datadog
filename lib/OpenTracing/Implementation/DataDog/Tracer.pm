@@ -62,12 +62,14 @@ has default_context => (
     => Maybe[InstanceOf['OpenTracing::Implementation::DataDog::SpanContext']],
     coerce
     => sub { is_plain_hashref $_[0] ? SpanContext->new( %{$_[0]} ) : $_[0] },
-    default
-    => sub { { service_name => "????", resource_name => "????" } },
     reader      => 'get_default_context',
     writer      => 'set_default_context',
 );
 
+
+sub _build_default_context {
+    shift->default_context_builder->( @_ );
+}
 
 
 has default_context_builder => (

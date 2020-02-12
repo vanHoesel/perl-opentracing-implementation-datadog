@@ -65,7 +65,29 @@ subtest 'Without default_context but with callback' => sub {
     lives_ok {
         $test_span_context = $test_tracer->extract_context
     }
-    "... and does give a SpanContext";
+    "... and does give a SpanContext created from a HashRef";
+    
+};
+
+
+
+subtest 'Without default_context but with callback' => sub {
+    
+    my $test_tracer;
+    lives_ok {
+        $test_tracer = Tracer->new(
+            default_context_builder => sub {
+                return bless { },
+                    "OpenTracing::Implementation::DataDog::SpanContext"
+            }
+        );
+    } "Can create a Tracer, with 'default_context_builder' callback";
+    
+    my $test_span_context;
+    lives_ok {
+        $test_span_context = $test_tracer->extract_context
+    }
+    "... and does give a SpanContext created from a blessed HashRef or object";
     
 };
 

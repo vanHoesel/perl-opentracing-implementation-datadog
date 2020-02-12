@@ -71,21 +71,22 @@ has default_context => (
     => Maybe[InstanceOf['OpenTracing::Implementation::DataDog::SpanContext']],
     coerce
     => sub { is_plain_hashref $_[0] ? SpanContext->new( %{$_[0]} ) : $_[0] },
+    default
+    => sub { croak "Can not construct a default SpanContext" },
     reader      => 'get_default_context',
     writer      => 'set_default_context',
 );
 
 
-sub _build_default_context {
-    shift->default_context_builder->( @_ );
-}
-
-
 has default_context_builder => (
-    is          => 'lazy',
+    is          => 'rw',
     isa         => CodeRef,
-    default     => sub { croak "Can not construct a default SpanContext" }
+    predicate   => 1,
 );
+
+sub _build_default_context_builder {
+    sub{ shift->get_default_context }
+}
 
 
 
@@ -100,7 +101,11 @@ C<default_context_builder>
 
 
 
-sub extract_context { $_[0]->get_default_context() }
+sub extract_context {
+    my $self = shift;
+    $self->has_default_context_builder ?
+        $self->default_context_builder->( @_ ) : $self->get_default_context
+}
 
 
 

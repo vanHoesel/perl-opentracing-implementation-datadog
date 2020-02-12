@@ -41,8 +41,10 @@ use aliased 'OpenTracing::Implementation::DataDog::SpanContext';
 use aliased 'OpenTracing::Implementation::DataDog::Agent';
 use aliased 'OpenTracing::Implementation::DataDog::ScopeManager';
 
+use Carp;
 use Ref::Util qw/is_plain_hashref/;
-use Types::Standard qw/HashRef InstanceOf Maybe Object/;
+use Types::Standard qw/HashRef InstanceOf Maybe Object CodeRef/;
+
 
 has agent => (
     is          => 'lazy',
@@ -64,6 +66,14 @@ has default_context => (
     => sub { { service_name => "????", resource_name => "????" } },
     reader      => 'get_default_context',
     writer      => 'set_default_context',
+);
+
+
+
+has default_context_builder => (
+    is          => 'lazy',
+    isa         => CodeRef,
+    default     => sub { croak "Can not construct a default SpanContext" }
 );
 
 

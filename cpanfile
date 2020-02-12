@@ -6,7 +6,6 @@ requires        "Exporter";
 requires        "HTTP::Request";
 requires        "JSON::MaybeXS";
 requires        "LWP::UserAgent";
-requires        "List::Util";
 requires        "Moo";
 requires        "Moo::Role";
 requires        "MooX::Attribute::ENV";

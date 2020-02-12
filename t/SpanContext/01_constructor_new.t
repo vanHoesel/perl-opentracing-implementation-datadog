@@ -28,18 +28,6 @@ subtest 'new SpanContext with all parameters' => sub {
         )
     } "Created a SpanContext" ;
     
-    cmp_deeply (
-        { $test_span_context->get_baggage_items } => {
-            bar           => 2,
-            foo           => 1,
-            resource_name => 'rsrc name',
-            service_name  => 'srvc name',
-            service_type  => 'web',
-            trace_id      => 12345
-        },
-        "... and did create the expected baggage_items"
-    );
-    
 };
 
 
@@ -55,20 +43,20 @@ subtest 'new SpanContext with minimal parameters' => sub {
         )
     } "Created a SpanContext" ;
     
-    cmp_deeply (
-        { $test_span_context->get_baggage_items } => {
-            resource_name => 'rsrc name',
-            service_name  => 'srvc name',
-            service_type  => 'custom',
-            trace_id      => code( sub { is_Int $_[0] } ),
-        },
-        "... and did create the expected baggage_items"
+    ok ( is_Int( $test_span_context->trace_id ),
+        "... and default 'trace_id' has been set to an 'Int'"
+    );
+    is ( $test_span_context->service_type, 'custom',
+        "... and default 'service_type' has been set to 'custom'"
     );
     
 };
 
 
-
+# Regression Test
+#
+# these assertions are done by Type::Tiny constraints
+#
 subtest 'new SpanContext with errornous or missing parameters' => sub {
     
     my $test_span_context;
@@ -81,7 +69,7 @@ subtest 'new SpanContext with errornous or missing parameters' => sub {
 #           service_name  => 'srvc name',
             resource_name => 'rsrc name',
         )
-    } qr/Missing required 'service_name'/,
+    } qr/Missing required .* service_name/,
     "throws: Missing required 'service_name'" ;
     
     throws_ok {
@@ -89,7 +77,7 @@ subtest 'new SpanContext with errornous or missing parameters' => sub {
             service_name  => undef,
             resource_name => 'rsrc name',
         )
-    } qr/Type mismatch: 'service_name' must be 'NonEmptyStr'/,
+    } qr/Undef did not pass type constraint "Defined"/m,
     "throws: Type mismatch: for 'undef'" ;
     
     throws_ok {
@@ -97,7 +85,7 @@ subtest 'new SpanContext with errornous or missing parameters' => sub {
             service_name  => \"StringReference",
             resource_name => 'rsrc name',
         )
-    } qr/Type mismatch: 'service_name' must be 'NonEmptyStr'/,
+    } qr/Reference \\"StringReference" did not pass type constraint "Value"/m,
     "throws: Type mismatch: for reference" ;
     
     throws_ok {
@@ -105,7 +93,7 @@ subtest 'new SpanContext with errornous or missing parameters' => sub {
             service_name  => "",
             resource_name => 'rsrc name',
         )
-    } qr/Type mismatch: 'service_name' must be 'NonEmptyStr'/,
+    } qr/Must not be empty/m,
     "throws: Type mismatch: for empty string" ;
     
     
@@ -116,7 +104,7 @@ subtest 'new SpanContext with errornous or missing parameters' => sub {
             service_name  => 'srvc name',
 #           resource_name => 'rsrc name',
         )
-    } qr/Missing required 'resource_name'/,
+    } qr/Missing required .* resource_name/,
     "throws: Missing required 'resource_name'" ;
     
     throws_ok {
@@ -124,7 +112,7 @@ subtest 'new SpanContext with errornous or missing parameters' => sub {
             service_name  => 'srvc name',
             resource_name => undef,
         )
-    } qr/Type mismatch: 'resource_name' must be 'NonEmptyStr'/,
+    } qr/Undef did not pass type constraint "Defined"/m,
     "throws: Type mismatch: for 'undef'" ;
     
     throws_ok {
@@ -132,7 +120,7 @@ subtest 'new SpanContext with errornous or missing parameters' => sub {
             service_name  => 'srvc name',
             resource_name => \"StringReference",
         )
-    } qr/Type mismatch: 'resource_name' must be 'NonEmptyStr'/,
+    } qr/Reference \\"StringReference" did not pass type constraint "Value"/m,
     "throws: Type mismatch: for reference" ;
     
     throws_ok {
@@ -140,7 +128,7 @@ subtest 'new SpanContext with errornous or missing parameters' => sub {
             service_name  => 'srvc name',
             resource_name => "",
         )
-    } qr/Type mismatch: 'resource_name' must be 'NonEmptyStr'/,
+    } qr/Must not be empty/m,
     "throws: Type mismatch: for empty string" ;
     
     
@@ -152,7 +140,7 @@ subtest 'new SpanContext with errornous or missing parameters' => sub {
             service_name  => 'srvc name',
             resource_name => 'rsrc name',
         )
-    } qr/Type mismatch: 'trace_id' must be 'Int'/,
+    } qr/Value "foo" did not pass type constraint "Int"/,
     "throws: Type mismatch: 'trace_id' must be 'Int'" ;
     
     
@@ -164,7 +152,7 @@ subtest 'new SpanContext with errornous or missing parameters' => sub {
             service_name  => 'srvc name',
             resource_name => 'rsrc name',
         )
-    } qr/Type mismatch: 'service_type' must be 'Enum'/,
+    } qr/Value "foo" did not pass type constraint "Enum\[.*\]/,
     "throws: Type mismatch: 'service_type' must be 'Enum'" ;
     
     lives_ok {

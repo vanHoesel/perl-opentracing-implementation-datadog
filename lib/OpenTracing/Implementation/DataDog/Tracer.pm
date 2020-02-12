@@ -14,19 +14,28 @@ OpenTracing::Implementation::DataDog::Tracer - Keep track of traces
     use aliased 'OpenTracing::Implementation::DataDog::ScopeManager';
     
     my $TRACER = Tracer->new(
-        agent => Agent->new(),
-        scope_manager->ScopeManager->new(),
+        agent                 => Agent->new(),
+        scope_manager         => ScopeManager->new(),
+        default_scope_builder => sub {
+            return {
+                service_name  => 'Your Service name',
+                resource_name => 'Some Resource name',
+            }
+        },
     );
 
 and later
 
     sub foo {
         
-        my $scope = $TRACER->start_active_span( Foo => %options );
+        my $scope = $TRACER->start_active_span( 'Operation Name' => %options );
         
         ...
         
-    } # $scope runs out of scope and gets destroyed ...
+        $scope->close;
+        
+        return $foo
+    }
 
 =cut
 
@@ -77,6 +86,17 @@ has default_context_builder => (
     isa         => CodeRef,
     default     => sub { croak "Can not construct a default SpanContext" }
 );
+
+
+
+=head1 CAVEATS
+
+C<extract_context> and C<inject_context> do not support any off the defined
+methods at all. All that C<extract_context> does at this moment, is providing a
+deafault C<SpanContext>, either given or cuntructed using a code-reference in
+C<default_context_builder>
+
+=cut
 
 
 

@@ -24,11 +24,11 @@ my $test_span = Span->new(
     operation_name  => 'oprt name',
     child_of        => $test_span_context,
     context         => $test_span_context,
-    start_time      => 12.345,
+    start_time      => 52.750,
     tags            => { baz => 3, qux => 4 },
 );
 
-$test_span->finish( 45.678 );
+$test_span->finish( 83.500 );
 
 my $struct = Agent->to_struct( $test_span );
 
@@ -40,8 +40,8 @@ cmp_deeply(
         resource   => "rsrc name",
         span_id    => code( sub { is_Int $_[0] } ),
         name       => "oprt name",
-        start      => 12345000000, # nano seconds
-        duration   => 33333000000, # nano seconds
+        start      => 52750000000, # nano seconds
+        duration   => 30750000000, # nano seconds
         meta       => {
             bar        => 2,
             baz        => 3,

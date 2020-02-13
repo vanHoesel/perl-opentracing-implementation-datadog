@@ -24,23 +24,6 @@ use Types::Standard qw/CodeRef Num/;
 
 
 
-has closed_time => (
-    is              => 'rwp',
-    isa             => Num,
-    predicate       => 'has_closed',
-#   trigger         => 1,
-    init_arg        => undef,
-);
-
-sub _trigger_closed_time {
-    my $self = shift;
-    
-    croak "Can't close an already closed scope"
-            if $self->has_closed;
-}
-
-
-
 has after_close => (
     is              => 'ro',
     isa             => CodeRef,
@@ -52,12 +35,7 @@ has after_close => (
 sub close {
     my $self = shift;
     
-    croak "Can't close an already closed scope"
-        if $self->has_closed;
-    
-    $self->_set_closed_time( epoch_floatingpoint() );
-    
-    return $self->after_close->( $self )
+    return $self->after_close->( $self, @_ )
     
 }
 
@@ -67,7 +45,7 @@ sub DEMOLISH {
     my $self = shift;
     my $in_global_destruction = shift;
     
-    return if $self->has_closed;
+    return if $self->closed;
     
     croak "Scope not programmatically closed before being demolished";
     #

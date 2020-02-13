@@ -8,8 +8,6 @@ BEGIN {
 
 use aliased 'OpenTracing::Implementation::DataDog::Tracer';
 
-use Test::MockModule;
-
 subtest 'No default_context or callback' => sub {
     
     my $test_tracer;

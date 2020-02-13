@@ -2,6 +2,14 @@ CHANGE LOG
 ==========
 
 
+2020-02-13 - v0.03
+------------------
+
+### Fixed
+    - Undeclared dependency Test::MockModule
+    - Test failure (with -Duselongdouble?)
+
+
 2020-02-12 - v0.02
 ------------------
 

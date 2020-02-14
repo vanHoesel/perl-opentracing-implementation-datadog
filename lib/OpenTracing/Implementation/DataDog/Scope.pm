@@ -41,22 +41,4 @@ sub close {
 
 
 
-sub DEMOLISH {
-    my $self = shift;
-    my $in_global_destruction = shift;
-    
-    return if $self->closed;
-    
-    croak "Scope not programmatically closed before being demolished";
-    #
-    # below might be appreciated behaviour, but you should close yourself
-    #
-    $self->close( )
-        unless $in_global_destruction;
-    
-    return
-}
-
-
-
 1;

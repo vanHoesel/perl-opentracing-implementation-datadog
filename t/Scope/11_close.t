@@ -21,7 +21,7 @@ our @close_arguments;
 
 my $test_obj = new_ok(
     'OpenTracing::Implementation::DataDog::Scope' => [
-        after_close => sub {
+        on_close => sub {
             push @main::close_arguments, [ @_ ];
             return;
         },
@@ -36,7 +36,7 @@ cmp_deeply(
     [ @close_arguments ] => [
         [ obj_isa('OpenTracing::Implementation::DataDog::Scope') ],
     ],
-    "... our 'after_close' CodeRef has been called"
+    "... our 'on_close' CodeRef has been called"
 );
 
 throws_ok {

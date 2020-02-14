@@ -24,7 +24,7 @@ use Types::Standard qw/CodeRef Num/;
 
 
 
-has after_close => (
+has on_close => (
     is              => 'ro',
     isa             => CodeRef,
     default         => sub { sub { } },
@@ -35,7 +35,7 @@ has after_close => (
 sub close {
     my $self = shift;
     
-    return $self->after_close->( $self, @_ )
+    return $self->on_close->( $self, @_ )
     
 }
 

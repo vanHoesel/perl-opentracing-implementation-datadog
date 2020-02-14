@@ -75,7 +75,7 @@ sub _build_scope {
     my $scope = OpenTracing::Implementation::DataDog::Scope->new(
         span                 => $span,
         finish_span_on_close => $finish_span_on_close,
-        after_close          => sub {
+        on_close             => sub {
             $self->_set__active_scope( $current_scope );
         }
     );

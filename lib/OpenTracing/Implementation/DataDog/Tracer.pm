@@ -61,7 +61,7 @@ has agent => (
     handles     => [qw/send_span/],
     coerce
     => sub { is_plain_hashref $_[0] ? Agent->new( %{$_[0]} ) : $_[0] },
-    default     => sub { {} },
+    default     => sub { {} }, # XXX this does not return an Object !!!
 );
 
 

@@ -17,9 +17,7 @@ use Types::Standard qw/CodeRef Object/;
 
 
 
-has span_id => (
-    is => 'ro',
-    init_arg => undef,
+has '+span_id' => (
     default => sub{ random_64bit_int() }
 );
 

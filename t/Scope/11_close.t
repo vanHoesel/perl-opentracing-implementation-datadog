@@ -23,7 +23,7 @@ my $test_obj = new_ok(
     'OpenTracing::Implementation::DataDog::Scope' => [
         on_close => sub {
             push @main::close_arguments, [ @_ ];
-            return;
+            return $_[0]; # $self
         },
     ], "Test Object"
 );

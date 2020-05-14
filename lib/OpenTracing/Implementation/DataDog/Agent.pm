@@ -133,7 +133,7 @@ sub to_struct {
         maybe
         type      => $context->service_type,
         
-        name      => $span->operation_name,
+        name      => $span->get_operation_name,
         start     => $span->nano_seconds_start_time(),
         duration  => $span->nano_seconds_duration(),
         

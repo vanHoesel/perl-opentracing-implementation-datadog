@@ -16,11 +16,7 @@ use Moo;
 
 with 'OpenTracing::Role::Scope';
 
-use OpenTracing::Implementation::DataDog::Utils qw/epoch_floatingpoint/;
-
-use Carp;
-use Types::Interface qw/ObjectDoesInterface/;
-use Types::Standard qw/CodeRef Num/;
+use Types::Standard qw/CodeRef/;
 
 
 

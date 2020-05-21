@@ -34,27 +34,6 @@ has _active_scope => (
 
 
 
-sub activate_span {
-    my $self = shift;
-    my $span = shift or croak "Missing OpenTracing Span";
-    
-    my $options = { @_ };
-    
-    # remove the `finish_span_on_close` option, which is for this method only! 
-    my $finish_span_on_close = 
-        exists( $options->{ finish_span_on_close } ) ?
-            !! delete $options->{ finish_span_on_close }
-            : !undef
-    ; # use 'truthness' of param if provided, or set to 'true' otherwise
-    
-    my $scope = $self->_build_scope( $span,
-        finish_span_on_close => $finish_span_on_close
-    );
-    
-    $self->_set__active_scope( $scope );
-    
-    return $scope
-}
 has '+scope_builder' => (
     lazy => 1,
     builder => sub { shift->datadog_scope_builder->(@_) },

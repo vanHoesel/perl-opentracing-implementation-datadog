@@ -14,10 +14,6 @@ our $VERSION = 'v0.30.1';
 
 use Moo;
 
-# with 'OpenTracing::Role::ScopeManager';
-#
-# moved to the bottom, so Moo can install methods that are required
-
 use OpenTracing::Implementation::DataDog::Scope;
 
 use Carp;
@@ -67,6 +63,11 @@ sub datadog_scope_builder {
 }
 
 
-with 'OpenTracing::Role::ScopeManager';
+
+BEGIN {
+    with 'OpenTracing::Role::ScopeManager';
+}
+
+
 
 1;

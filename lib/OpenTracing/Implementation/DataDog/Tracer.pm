@@ -139,7 +139,7 @@ sub build_span {
         
         context         => $opts{ context },
         
-        on_DEMOLISH     => sub {
+        on_finish     => sub {
             my $span = shift;
             $self->send_span( $span )
         },

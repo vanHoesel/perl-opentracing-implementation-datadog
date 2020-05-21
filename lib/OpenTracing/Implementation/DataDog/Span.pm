@@ -23,25 +23,4 @@ has '+span_id' => (
 
 
 
-has on_DEMOLISH => (
-    is              => 'ro',
-    isa             => CodeRef,
-    default         => sub { sub { } }
-);
-
-
-
-
-sub DEMOLISH {
-    my $self = shift;
-    my $in_global_destruction = shift;
-    
-    $self->on_DEMOLISH->( $self )
-        unless $in_global_destruction;
-    
-    return
-}
-
-
-
 1;

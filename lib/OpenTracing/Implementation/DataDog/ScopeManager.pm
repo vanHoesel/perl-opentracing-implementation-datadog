@@ -16,12 +16,14 @@ use Moo;
 
 use OpenTracing::Implementation::DataDog::Scope;
 
+use OpenTracing::Types qw/Scope/;
+use Types::Standard qw/Maybe/;
 
 
 
 has _active_scope => (
     is => 'rwp',
-    isa => Maybe[ObjectDoesInterface['OpenTracing::Role::Scope']],
+    isa => Maybe[Scope],
     reader => 'get_active_scope',
 );
 

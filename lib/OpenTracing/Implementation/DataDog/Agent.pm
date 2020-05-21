@@ -33,6 +33,10 @@ use LWP::UserAgent;
 use PerlX::Maybe qw/maybe provided/;
 use Types::Standard qw/HasMethods/;
 
+use OpenTracing::Implementation::DataDog::Utils qw(
+    nano_seconds
+);
+
 
 
 has user_agent => (
@@ -134,8 +138,8 @@ sub to_struct {
         type      => $context->service_type,
         
         name      => $span->get_operation_name,
-        start     => $span->nano_seconds_start_time(),
-        duration  => $span->nano_seconds_duration(),
+        start     => nano_seconds( $span->start_time() ),
+        duration  => nano_seconds( $span->duration() ),
         
         maybe
         parent_id => $span->parent_span_id(),

@@ -31,11 +31,6 @@ has on_DEMOLISH => (
 
 
 
-sub nano_seconds_start_time { nano_seconds( $_[0]->start_time ) }
-
-sub nano_seconds_duration   { nano_seconds( $_[0]->duration ) }
-
-
 
 sub DEMOLISH {
     my $self = shift;

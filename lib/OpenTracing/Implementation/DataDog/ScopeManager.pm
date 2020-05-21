@@ -55,10 +55,14 @@ sub activate_span {
     
     return $scope
 }
+has '+scope_builder' => (
+    lazy => 1,
+    builder => sub { shift->datadog_scope_builder->(@_) },
+);
 
 
 
-sub _build_scope {
+sub datadog_scope_builder {
     my $self = shift;
     my $span = shift;
     my $options = { @_ };
@@ -76,7 +80,7 @@ sub _build_scope {
         span                 => $span,
         finish_span_on_close => $finish_span_on_close,
         on_close             => sub {
-            $self->_set__active_scope( $current_scope );
+            $self->set_active_scope( $current_scope );
         }
     );
     

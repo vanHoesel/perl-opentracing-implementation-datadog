@@ -21,14 +21,6 @@ use Types::Standard qw/Maybe/;
 
 
 
-has _active_scope => (
-    is => 'rwp',
-    isa => Maybe[Scope],
-    reader => 'get_active_scope',
-);
-
-
-
 has '+scope_builder' => (
     lazy => 1,
     builder => sub { shift->datadog_scope_builder->(@_) },

@@ -16,9 +16,6 @@ use Moo;
 
 use OpenTracing::Implementation::DataDog::Scope;
 
-use Carp;
-use Types::Interface qw/ObjectDoesInterface/;
-use Types::Standard qw/Maybe/;
 
 
 

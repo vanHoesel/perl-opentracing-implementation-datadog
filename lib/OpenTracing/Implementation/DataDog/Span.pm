@@ -8,14 +8,7 @@ use Moo;
 
 with 'OpenTracing::Role::Span';
 
-use OpenTracing::Implementation::DataDog::Utils qw(
-    random_64bit_int
-    nano_seconds
-);
-
-use Types::Standard qw/CodeRef Object/;
-
-
+use OpenTracing::Implementation::DataDog::Utils qw/random_64bit_int/;
 
 has '+span_id' => (
     default => sub{ random_64bit_int() }

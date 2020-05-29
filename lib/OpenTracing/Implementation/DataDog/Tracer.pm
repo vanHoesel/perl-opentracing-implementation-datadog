@@ -45,14 +45,23 @@ use Moo;
 
 with 'OpenTracing::Role::Tracer';
 
+use aliased 'OpenTracing::Implementation::DataDog::Agent';
+use aliased 'OpenTracing::Implementation::DataDog::Scope';
+use aliased 'OpenTracing::Implementation::DataDog::ScopeManager';
 use aliased 'OpenTracing::Implementation::DataDog::Span';
 use aliased 'OpenTracing::Implementation::DataDog::SpanContext';
-use aliased 'OpenTracing::Implementation::DataDog::Agent';
-use aliased 'OpenTracing::Implementation::DataDog::ScopeManager';
 
 use Carp;
 use Ref::Util qw/is_plain_hashref/;
 use Types::Standard qw/HashRef InstanceOf Maybe Object CodeRef/;
+
+
+
+has '+scope_manager' => (
+    required => 0,
+    default => sub { ScopeManager->new },
+);
+
 
 
 has agent => (
@@ -63,6 +72,7 @@ has agent => (
     => sub { is_plain_hashref $_[0] ? Agent->new( %{$_[0]} ) : $_[0] },
     default     => sub { {} }, # XXX this does not return an Object !!!
 );
+
 
 
 has default_context => (
@@ -126,7 +136,7 @@ sub build_span {
     my %opts = @_;
     
     my $span = Span->new(
-             
+        
         operation_name  => $opts{ operation_name },
         
         child_of        => $opts{ child_of },
@@ -151,11 +161,4 @@ sub build_span {
 
 
 
-sub _build_scope_manager {
-    my $self = shift;
-    
-    return ScopeManager->new( @_ )
-}
-
 1;
-

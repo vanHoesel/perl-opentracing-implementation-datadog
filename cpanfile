@@ -19,6 +19,7 @@ requires        "Try::Tiny";
 requires        "Types::Common::String";
 requires        "Types::Interface";
 requires        "Types::Standard";
+requires        "Type::Tiny::XS";
 requires        "aliased";
 requires        "syntax";
 

@@ -1,5 +1,6 @@
 package OpenTracing::Implementation::DataDog::Span;
 
+our $VERSION = '0.04_003';
 
 use syntax 'maybe';
 

@@ -21,6 +21,8 @@ and later:
 
 =cut
 
+our $VERSION = '0.04_003';
+
 use Moo;
 use MooX::Attribute::ENV;
 

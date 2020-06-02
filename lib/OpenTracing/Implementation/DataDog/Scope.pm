@@ -10,6 +10,8 @@ OpenTracing::Implementation::DataDog::Scope - Formailzing active spans
 
 =cut
 
+our $VERSION = '0.04_003';
+
 use Moo;
 
 with 'OpenTracing::Role::Scope';

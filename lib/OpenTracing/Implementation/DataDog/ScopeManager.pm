@@ -10,6 +10,8 @@ OpenTracing::Implementation::DataDog::ScopeManager - Keep track of active scopes
 
 =cut
 
+our $VERSION = '0.04_003';
+
 use Moo;
 
 # with 'OpenTracing::Role::ScopeManager';

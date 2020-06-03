@@ -31,10 +31,8 @@ use Types::Standard qw/Enum Int/;
 
 
 
-has trace_id => (
-    is              => 'ro',
-    default         => sub { random_64bit_int() },
-    isa             => Int,
+has '+trace_id' => (
+    default => sub{ random_64bit_int() }
 );
 
 

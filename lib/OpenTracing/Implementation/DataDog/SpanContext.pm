@@ -32,6 +32,7 @@ use Types::Standard qw/Enum Int/;
 
 
 has '+trace_id' => (
+    isa => Int,
     default => sub{ random_64bit_int() }
 );
 

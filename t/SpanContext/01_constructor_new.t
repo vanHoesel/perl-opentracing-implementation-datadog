@@ -22,7 +22,7 @@ subtest 'new SpanContext with all parameters' => sub {
     
     lives_ok {
         $test_span_context = SpanContext->new(
-            trace_id      => 12345,
+#           trace_id      => 12345, # you can not assign to trace_id!
             service_type  => 'web',
             service_name  => 'srvc name',
             resource_name => 'rsrc name',
@@ -30,6 +30,7 @@ subtest 'new SpanContext with all parameters' => sub {
         )
     } "Created a SpanContext" ;
     
+    use DDP; p $test_span_context;
 };
 
 
@@ -134,16 +135,18 @@ subtest 'new SpanContext with errornous or missing parameters' => sub {
     "throws: Type mismatch: for empty string" ;
     
     
-    note 'trace_id';
-    
-    throws_ok {
-        $test_span_context = SpanContext->new(
-            trace_id      => 'foo',
-            service_name  => 'srvc name',
-            resource_name => 'rsrc name',
-        )
-    } qr/Value "foo" did not pass type constraint "Int"/,
-    "throws: Type mismatch: 'trace_id' must be 'Int'" ;
+#   note 'trace_id';
+#   
+#   throws_ok {
+#       $test_span_context = SpanContext->new(
+#           trace_id      => 'foo',
+#           service_name  => 'srvc name',
+#           resource_name => 'rsrc name',
+#       )
+#   } qr/Value "foo" did not pass type constraint "Int"/,
+#   "throws: Type mismatch: 'trace_id' must be 'Int'" ;
+#   
+#   there should be an entire different error, cause we can not set a trace_id!
     
     
     note 'service_type';

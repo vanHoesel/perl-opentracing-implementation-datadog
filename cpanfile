@@ -10,6 +10,7 @@ requires        "Moo";
 requires        "Moo::Role";
 requires        "MooX::Attribute::ENV";
 requires        "MooX::HandlesVia";
+requires        "MooX::Enumeration";
 requires        "PerlX::Maybe";
 requires        "Ref::Util";
 requires        "Sub::Trigger::Lock";

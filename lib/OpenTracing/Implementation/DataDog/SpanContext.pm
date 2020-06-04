@@ -21,13 +21,15 @@ OpenTracing::Implementation::DataDog::SpanContext - Keep track of traces
 =cut
 
 use Moo;
+use MooX::Attribute::ENV;
+use MooX::Enumeration;
 
 with 'OpenTracing::Role::SpanContext';
 
 use OpenTracing::Implementation::DataDog::Utils qw/random_64bit_int/;
 
 use Types::Common::String qw/NonEmptyStr/;
-use Types::Standard qw/Enum Int/;
+use Types::Standard qw/Int/;
 
 
 
@@ -40,8 +42,9 @@ has '+trace_id' => (
 
 has service_name => (
     is              => 'ro',
+    env_key         => 'DD_SERVICE_NAME',
     required        => 1,
-    isa             => NonEmptyStr,
+    isa             => NonEmptyStr->where( 'length($_) <= 100' ),
 );
 
 
@@ -49,14 +52,15 @@ has service_name => (
 has service_type => (
     is              => 'ro',
     default         => 'custom',
-    isa             => Enum[qw/web db cache custom/],
+    enum            => [qw/web db cache custom/],
+    handles         => 2, # such that we have `service_type_is_...`
 );
 
 
 
 has resource_name => (
     is              => 'ro',
-    isa             => NonEmptyStr,
+    isa             => NonEmptyStr->where( 'length($_) <= 5000' ),
     required        => 1,
 );
 

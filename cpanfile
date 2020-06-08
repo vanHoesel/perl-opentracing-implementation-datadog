@@ -15,7 +15,6 @@ requires        "PerlX::Maybe";
 requires        "Ref::Util";
 requires        "Sub::Trigger::Lock";
 requires        "Syntax::Feature::Maybe";
-requires        "Time::HiRes";
 requires        "Try::Tiny";
 requires        "Types::Common::String";
 requires        "Types::Interface";

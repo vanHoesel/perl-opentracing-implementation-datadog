@@ -39,9 +39,11 @@ subtest 'new SpanContext with minimal parameters' => sub {
     
     my $test_span_context;
     
+    local $ENV{ DD_SERVICE_NAME } = 'srvc dflt';
+    
     lives_ok {
         $test_span_context = SpanContext->new(
-            service_name  => 'srvc name',
+#           service_name  => 'srvc name', # DD_SERVICE_NMAME
             resource_name => 'rsrc name',
         )
     } "Created a SpanContext" ;
@@ -51,6 +53,9 @@ subtest 'new SpanContext with minimal parameters' => sub {
     );
     is ( $test_span_context->get_service_type, 'custom',
         "... and default 'service_type' has been set to 'custom'"
+    );
+    is ( $test_span_context->get_service_name, 'srvc dflt',
+        "... and default 'service_name' has been set to DD_SERVICE_NAME"
     );
     
 };

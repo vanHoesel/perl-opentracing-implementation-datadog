@@ -30,7 +30,6 @@ subtest 'new SpanContext with all parameters' => sub {
         )
     } "Created a SpanContext" ;
     
-    use DDP; p $test_span_context;
 };
 
 
@@ -65,10 +64,9 @@ subtest 'new SpanContext with minimal parameters' => sub {
 #
 # these assertions are done by Type::Tiny constraints
 #
-subtest 'new SpanContext with errornous or missing parameters' => sub {
+subtest 'new SpanContext with erroneous or missing parameters' => sub {
     
     my $test_span_context;
-    
     
     note 'service_name';
     
@@ -79,7 +77,7 @@ subtest 'new SpanContext with errornous or missing parameters' => sub {
         )
     } qr/Missing required .* service_name/,
     "throws: Missing required 'service_name'" ;
-    
+        
     throws_ok {
         $test_span_context = SpanContext->new(
             service_name  => undef,

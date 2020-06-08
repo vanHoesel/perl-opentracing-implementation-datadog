@@ -2,7 +2,7 @@ package OpenTracing::Implementation::DataDog::Scope;
 
 =head1 NAME
 
-OpenTracing::Implementation::DataDog::Scope - Formailzing active spans
+OpenTracing::Implementation::DataDog::Scope - A DataDog specific Scope
 
 =head SYNOPSIS
 
@@ -10,7 +10,9 @@ OpenTracing::Implementation::DataDog::Scope - Formailzing active spans
 
 =cut
 
-our $VERSION = 'v0.30.1';
+
+
+our $VERSION = '0.04_003';
 
 use Moo;
 

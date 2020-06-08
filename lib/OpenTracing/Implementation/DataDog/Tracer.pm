@@ -15,8 +15,6 @@ OpenTracing::Implementation::DataDog::Tracer - Keep track of traces
     
     my $TRACER = Tracer->new(
         agent                 => Agent->new(),
-        scope_manager         => ScopeManager->new(),
-        },
     );
 
 and later
@@ -41,14 +39,10 @@ use Moo;
 with 'OpenTracing::Role::Tracer';
 
 use aliased 'OpenTracing::Implementation::DataDog::Agent';
-use aliased 'OpenTracing::Implementation::DataDog::Scope';
 use aliased 'OpenTracing::Implementation::DataDog::ScopeManager';
-use aliased 'OpenTracing::Implementation::DataDog::Span';
-use aliased 'OpenTracing::Implementation::DataDog::SpanContext';
 
-use Carp;
 use Ref::Util qw/is_plain_hashref/;
-use Types::Standard qw/HashRef InstanceOf Maybe Object CodeRef/;
+use Types::Standard qw/Object/;
 
 
 

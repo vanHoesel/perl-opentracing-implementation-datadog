@@ -2,7 +2,7 @@ package OpenTracing::Implementation::DataDog::SpanContext;
 
 =head1 NAME
 
-OpenTracing::Implementation::DataDog::SpanContext - Keep track of traces
+OpenTracing::Implementation::DataDog::SpanContext - A DataDog Implementation
 
 =head1 SYNOPSIS
 
@@ -34,6 +34,7 @@ use Types::Standard qw/Int/;
 
 
 has '+trace_id' => (
+    is =>'ro',
     isa => Int,
     default => sub{ random_64bit_int() }
 );

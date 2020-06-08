@@ -83,7 +83,8 @@ sub _build_uri {
     
     return "http://$self->{ host }:$self->{ port }/$self->{ path }"
 }
-
+#
+# URI::Template is a nicer solution for this and more dynamic
 
 
 has _json_encoder => (
@@ -95,6 +96,8 @@ has _json_encoder => (
 sub _build__json_encoder {
     JSON()->new->utf8->canonical->pretty
 }
+#
+# I just love readable and consistant JSONs
 
 
 
@@ -143,6 +146,8 @@ sub to_struct {
         
         maybe
         parent_id => $span->parent_span_id(),
+        #
+        # this method may get depricated, once moving to 'references'
         
 #       error     => ... ,
         

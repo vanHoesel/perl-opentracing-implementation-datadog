@@ -16,11 +16,6 @@ OpenTracing::Implementation::DataDog::Tracer - Keep track of traces
     my $TRACER = Tracer->new(
         agent                 => Agent->new(),
         scope_manager         => ScopeManager->new(),
-        default_scope_builder => sub {
-            return {
-                service_name  => 'Your Service name',
-                resource_name => 'Some Resource name',
-            }
         },
     );
 
@@ -75,28 +70,10 @@ has agent => (
 
 
 
-has default_context => (
-    is          => 'lazy',
-    isa
-    => Maybe[InstanceOf['OpenTracing::Implementation::DataDog::SpanContext']],
-    coerce
-    => sub { is_plain_hashref $_[0] ? SpanContext->new( %{$_[0]} ) : $_[0] },
-    default
-    => sub { croak "Can not construct a default SpanContext" },
-    reader      => 'get_default_context',
-    writer      => 'set_default_context',
+
+
 );
 
-
-has default_context_builder => (
-    is          => 'rw',
-    isa         => CodeRef,
-    predicate   => 1,
-);
-
-sub _build_default_context_builder {
-    sub{ shift->get_default_context }
-}
 
 
 

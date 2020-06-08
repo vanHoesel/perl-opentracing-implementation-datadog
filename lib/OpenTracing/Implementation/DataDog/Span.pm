@@ -1,6 +1,12 @@
 package OpenTracing::Implementation::DataDog::Span;
 
-our $VERSION = 'v0.30.1';
+=head1 NAME
+
+OpenTracing::Implementation::DataDog::Span - A DataDog Implementation for a Span
+
+=cut
+
+our $VERSION = '0.04_003';
 
 use syntax 'maybe';
 
@@ -15,17 +21,51 @@ use aliased 'OpenTracing::Implementation::DataDog::SpanContext';
 use Types::Standard qw/Str/;
 use Ref::Util qw/is_plain_hashref/;
 use Carp;
+
+=head1 DESCRIPTION
+
+This is a L<OpenTracing Span|OpenTracing::Interface::Span> compliant
+implementation whit DataDog specific extentions
+
+=cut
+
+
+
+=head1 EXTENDED ATTRIBUTES
+
+=cut
+
+
+
+=head2 C<operation_name>
+
+DataDog requires that its length should not exceed 100 characters.
+
+=cut
+
 has '+operation_name' => (
     isa => Str->where( 'length($_) <= 100' ),
 );
 
 
 
+=head2 C<span_id>
+
+DataDog requires this to be a 64 bit unsigned int.
+
+=cut
+
 has '+span_id' => (
     default => sub{ random_64bit_int() }
 );
 
 
+
+=head2 C<context>
+
+Add coercion from plain hashref
+
+=cut
 
 has '+context' => (
     coerce
@@ -42,5 +82,43 @@ has '+context' => (
 # instantiate such context with a 'fresh' `trace_id`
 
 
+
+=head1 SEE ALSO
+
+=over
+
+=item L<OpenTracing::Implementation::DataDog>
+
+Sending traces to DataDog using Agent.
+
+=item L<OpenTracing::Role::Span>
+
+Role for OpenTracing Implementations.
+
+=back
+
+
+
+=head1 AUTHOR
+
+Theo van Hoesel <tvanhoesel@perceptyx.com>
+
+
+
+=head1 COPYRIGHT AND LICENSE
+
+'OpenTracing::Implementation::DataDog'
+is Copyright (C) 2019 .. 2020, Perceptyx Inc
+
+This library is free software; you can redistribute it and/or modify it under
+the terms of the Artistic License 2.0.
+
+This package is distributed in the hope that it will be useful, but it is
+provided "as is" and without any express or implied warranties.
+
+For details, see the full text of the license in the file LICENSE.
+
+
+=cut
 
 1;

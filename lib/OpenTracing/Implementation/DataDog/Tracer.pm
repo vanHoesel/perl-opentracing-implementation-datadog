@@ -46,12 +46,51 @@ use Types::Standard qw/Object/;
 
 
 
+=head1 DESCRIPTION
+
+This is a L<OpenTracing SpanContext|OpenTracing::Interface::SpanContext>
+compliant implementation with DataDog specific extentions
+
+=cut
+
+
+
+=head1 EXTENDED ATTRIBUTES
+
+=cut
+
+
+
+=head2 C<scope_manager>
+
+A L<OpenTracing::Types::ScopeManger> that now defaults to a
+L<DataDog::ScopeManger|OpenTracing::Implementation::DataDog::ScopeManager>
+
+=cut
+
 has '+scope_manager' => (
     required => 0,
     default => sub { ScopeManager->new },
 );
 
 
+
+=head1 DATADOG SPECIFIC ATTRIBUTES
+
+=cut
+
+
+
+=head2 C<agent>
+
+An agent that has a C<send_span> method that will get called on a `on_finish`.
+
+See L<DataDog::Agent|OpenTracing::Implementation::DataDog::Agent> for more.
+
+It also accepts a plain hash refference with key-value pairs suitable to
+construct a Agent.
+
+=cut
 
 has agent => (
     is          => 'lazy',
@@ -61,24 +100,6 @@ has agent => (
     => sub { is_plain_hashref $_[0] ? Agent->new( %{$_[0]} ) : $_[0] },
     default     => sub { {} }, # XXX this does not return an Object !!!
 );
-
-
-
-
-
-);
-
-
-
-
-=head1 CAVEATS
-
-C<extract_context> and C<inject_context> do not support any off the defined
-methods at all. All that C<extract_context> does at this moment, is providing a
-deafault C<SpanContext>, either given or cuntructed using a code-reference in
-C<default_context_builder>
-
-=cut
 
 
 
@@ -121,5 +142,43 @@ sub build_span {
 }
 
 
+
+=head1 SEE ALSO
+
+=over
+
+=item L<OpenTracing::Implementation::DataDog>
+
+Sending traces to DataDog using Agent.
+
+=item L<OpenTracing::Role::Tracer>
+
+Role for OpenTracing Implementations.
+
+=back
+
+
+
+=head1 AUTHOR
+
+Theo van Hoesel <tvanhoesel@perceptyx.com>
+
+
+
+=head1 COPYRIGHT AND LICENSE
+
+'OpenTracing::Implementation::DataDog'
+is Copyright (C) 2019 .. 2020, Perceptyx Inc
+
+This library is free software; you can redistribute it and/or modify it under
+the terms of the Artistic License 2.0.
+
+This package is distributed in the hope that it will be useful, but it is
+provided "as is" and without any express or implied warranties.
+
+For details, see the full text of the license in the file LICENSE.
+
+
+=cut
 
 1;

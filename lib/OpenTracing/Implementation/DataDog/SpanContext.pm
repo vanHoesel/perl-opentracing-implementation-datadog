@@ -45,6 +45,7 @@ has service_name => (
     env_key         => 'DD_SERVICE_NAME',
     required        => 1,
     isa             => NonEmptyStr->where( 'length($_) <= 100' ),
+    reader          => 'get_service_name',
 );
 
 
@@ -54,6 +55,7 @@ has service_type => (
     default         => 'custom',
     enum            => [qw/web db cache custom/],
     handles         => 2, # such that we have `service_type_is_...`
+    reader          => 'get_service_type',
 );
 
 
@@ -62,6 +64,7 @@ has resource_name => (
     is              => 'ro',
     isa             => NonEmptyStr->where( 'length($_) <= 5000' ),
     required        => 1,
+    reader          => 'get_resource_name',
 );
 
 

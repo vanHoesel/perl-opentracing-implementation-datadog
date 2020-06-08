@@ -49,7 +49,7 @@ subtest 'new SpanContext with minimal parameters' => sub {
     ok ( is_Int( $test_span_context->trace_id ),
         "... and default 'trace_id' has been set to an 'Int'"
     );
-    is ( $test_span_context->service_type, 'custom',
+    is ( $test_span_context->get_service_type, 'custom',
         "... and default 'service_type' has been set to 'custom'"
     );
     

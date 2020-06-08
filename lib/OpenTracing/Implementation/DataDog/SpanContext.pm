@@ -21,8 +21,8 @@ OpenTracing::Implementation::DataDog::SpanContext - Keep track of traces
 =cut
 
 use Moo;
-use MooX::Attribute::ENV;
 use MooX::Enumeration;
+use MooX::Attribute::ENV;
 
 with 'OpenTracing::Role::SpanContext';
 

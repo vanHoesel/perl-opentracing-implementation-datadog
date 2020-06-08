@@ -112,17 +112,7 @@ C<default_context_builder>
 
 
 sub extract_context {
-    my $self = shift;
-    
-    return $self->get_default_context
-        unless $self->has_default_context_builder;
-    
-    my $builder_result = $self->default_context_builder->( @_ );
-    
-    return $builder_result
-        unless is_plain_hashref $builder_result;
-    
-    return SpanContext->new( %{$builder_result} );
+    undef
 }
 
 

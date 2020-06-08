@@ -88,6 +88,31 @@ Creates a new SpanContext object;
 
 =head1 ATTRIBUTES
 
+sub with_service_name { $_[0]->_clone( service_name => $_[1] ) }
+
+
+
+sub with_service_type { $_[0]->_clone( service_type => $_[1] ) }
+
+
+
+sub with_resource_name { $_[0]->_clone( resource_name => $_[1] ) }
+
+
+
+# _clone
+#
+# Creates a shallow clone of the object, which is fine
+#
+sub _clone {
+    my ( $self, @args ) = @_;
+    
+    bless { %$self, @args }, ref $self;
+    
+}
+
+
+
 
 
 =head2 trace_id

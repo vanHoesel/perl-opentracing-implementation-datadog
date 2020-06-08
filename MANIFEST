@@ -25,6 +25,9 @@ t/Span/01_can_all_ok.t
 t/SpanContext/00_use_ok.t
 t/SpanContext/01_can_all_ok.t
 t/SpanContext/01_constructor_new.t
+t/SpanContext/11_with_resource_name.t
+t/SpanContext/11_with_service_name.t
+t/SpanContext/11_with_service_type.t
 t/Tracer/00_use_ok.t
 t/Tracer/01_can_all_ok.t
 t/Tracer/11_extract_context.t

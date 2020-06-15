@@ -291,9 +291,7 @@ sub to_struct {
         duration  => nano_seconds( $span->duration() ),
         
         maybe
-        parent_id => $span->parent_span_id(),
-        #
-        # this method may get depricated, once moving to 'references'
+        parent_id => $span->get_parent_span_id(),
         
 #       error     => ... ,
         

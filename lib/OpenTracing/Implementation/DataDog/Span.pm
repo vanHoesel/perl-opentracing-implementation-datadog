@@ -14,8 +14,6 @@ use Moo;
 
 with 'OpenTracing::Role::Span';
 
-use OpenTracing::Implementation::DataDog::Utils qw/random_64bit_int/;
-
 use aliased 'OpenTracing::Implementation::DataDog::SpanContext';
 
 use Types::Standard qw/Str/;
@@ -45,18 +43,6 @@ DataDog requires that its length should not exceed 100 characters.
 
 has '+operation_name' => (
     isa => Str->where( 'length($_) <= 100' ),
-);
-
-
-
-=head2 C<span_id>
-
-DataDog requires this to be a 64 bit unsigned int.
-
-=cut
-
-has '+span_id' => (
-    default => sub{ random_64bit_int() }
 );
 
 

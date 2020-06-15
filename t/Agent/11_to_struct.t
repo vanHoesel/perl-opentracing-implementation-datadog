@@ -35,6 +35,7 @@ my $struct = Agent->to_struct( $test_span );
 cmp_deeply(
     $struct => {
         trace_id   => code( sub { is_Int $_[0] } ),
+        span_id    => code( sub { is_Int $_[0] } ),
         type       => "custom",
         service    => "srvc name",
         resource   => "rsrc name",

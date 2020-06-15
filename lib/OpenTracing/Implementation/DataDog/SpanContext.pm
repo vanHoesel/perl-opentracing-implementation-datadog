@@ -62,6 +62,20 @@ has '+trace_id' => (
 
 
 
+=head2 C<span_id>
+
+DataDog requires this to be a unsigned 64-bit integer
+
+=cut
+
+has '+span_id' => (
+    is =>'ro',
+    isa => Int,
+    default => sub{ random_64bit_int() }
+);
+
+
+
 =head1 DATADOG SPECIFIC ATTRIBUTES
 
 =cut

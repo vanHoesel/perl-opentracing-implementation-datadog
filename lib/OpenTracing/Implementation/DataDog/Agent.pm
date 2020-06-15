@@ -278,13 +278,13 @@ sub to_struct {
     
     my $data = {
         trace_id  => $context->trace_id,
+        span_id   => $context->span_id,
         resource  => $context->get_resource_name,
         service   => $context->get_service_name,
         
         maybe
         type      => $context->get_service_type,
         
-        span_id   => $span->span_id,
         name      => $span->get_operation_name,
         start     => nano_seconds( $span->start_time() ),
         duration  => nano_seconds( $span->duration() ),

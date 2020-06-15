@@ -15,9 +15,14 @@ subtest 'No default_context or callback' => sub {
         $test_tracer = Tracer->new( );
     } "Can create a Tracer, without any attributes";
     
+    
     my $test_span_context;
     lives_ok {
-        $test_span_context = $test_tracer->extract_context( undef, undef )
+        $test_span_context = $test_tracer
+            ->extract_context(
+                'CARRIER_FORMAT',
+                bless( { foo => 0, bar => [ 1, 2 ] }, 'MyStub::Carrier' )
+            )
         #
         # XXX: this needs a FORMAT and a carrier
     } "... and can call 'extract_context'";
@@ -29,3 +34,9 @@ subtest 'No default_context or callback' => sub {
 
 
 done_testing( );
+
+
+
+package MyStub::Carrier;
+
+sub foo { ... }

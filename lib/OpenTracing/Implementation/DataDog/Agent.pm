@@ -217,7 +217,7 @@ sub send_span {
 
 =head2 C<to_struct>
 
-Gather required data from the span and it's context, tags and baggage items.
+Gather required data from a single span and its context, tags and baggage items.
 
 =head3 Required Positional Arguments
 
@@ -235,13 +235,13 @@ a hashreference with the following keys:
 
 =item C<trace_id>
 
+=item C<span_id>
+
 =item C<resource>
 
 =item C<service>
 
 =item C<type> (optional)
-
-=item C<span_id>
 
 =item C<name>
 

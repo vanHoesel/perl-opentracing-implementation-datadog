@@ -202,7 +202,7 @@ sub send_span {
     
     my $data = __PACKAGE__->to_struct( $span );
     
-    my $resp = $self->_http_post_struct_as_json( [[ $data ]] );
+    my $resp = $self->http_post_struct_as_json( [[ $data ]] );
     
     return $resp->is_success
 }
@@ -310,7 +310,7 @@ sub to_struct {
 
 
 
-sub _http_post_struct_as_json {
+sub http_post_struct_as_json {
     my $self = shift;
     my $struct = shift;
     

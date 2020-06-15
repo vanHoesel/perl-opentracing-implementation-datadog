@@ -40,6 +40,7 @@ with 'OpenTracing::Role::Tracer';
 
 use aliased 'OpenTracing::Implementation::DataDog::Agent';
 use aliased 'OpenTracing::Implementation::DataDog::ScopeManager';
+use aliased 'OpenTracing::Implementation::DataDog::SpanContext';
 
 use Ref::Util qw/is_plain_hashref/;
 use Types::Standard qw/Object/;
@@ -142,6 +143,24 @@ sub build_span {
 }
 
 
+
+sub build_context {
+    my $self = shift;
+    my %opts = @_;
+    
+    my $span_context = SpanContext->new(
+        
+        resource_name   => $opts{ resource_name },
+        
+        maybe
+        service_name    => $opts{ service_name },
+        
+        maybe
+        service_type    => $opts{ service_type },
+    );
+    
+    return $span_context
+}
 
 =head1 SEE ALSO
 

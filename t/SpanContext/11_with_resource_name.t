@@ -23,7 +23,7 @@ subtest 'Clone with resource_name' => sub {
             service_type  => 'web',
             service_name  => 'srvc 1',
             resource_name => 'rsrc 1',
-            baggage_items => { foo => 1, bar => 2, trace_id => 67890 },
+            baggage_items => { foo => 1, bar => 2 },
         )
     } "Created a SpanContext [1]"
     

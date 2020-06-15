@@ -28,6 +28,7 @@ with 'OpenTracing::Role::SpanContext';
 
 use OpenTracing::Implementation::DataDog::Utils qw/random_64bit_int/;
 
+use Sub::Trigger::Lock;
 use Types::Common::String qw/NonEmptyStr/;
 use Types::Standard qw/Int/;
 
@@ -99,6 +100,7 @@ has service_name => (
     required        => 1,
     isa             => NonEmptyStr->where( 'length($_) <= 100' ),
     reader          => 'get_service_name',
+    trigger         => Lock,
 );
 
 
@@ -119,6 +121,7 @@ has service_type => (
     enum            => [qw/web db cache custom/],
     handles         => 2, # such that we have `service_type_is_...`
     reader          => 'get_service_type',
+    trigger         => Lock,
 );
 
 
@@ -136,6 +139,7 @@ has resource_name => (
     isa             => NonEmptyStr->where( 'length($_) <= 5000' ),
     required        => 1,
     reader          => 'get_resource_name',
+    trigger         => Lock,
 );
 
 
@@ -222,7 +226,7 @@ A cloned C<DataDog::SpanContext>
 
 =cut
 
-sub with_service_name { $_[0]->_clone( service_name => $_[1] ) }
+sub with_service_name { $_[0]->clone_with( service_name => $_[1] ) }
 
 
 
@@ -248,7 +252,7 @@ A cloned C<DataDog::SpanContext>
 
 =cut
 
-sub with_service_type { $_[0]->_clone( service_type => $_[1] ) }
+sub with_service_type { $_[0]->clone_with( service_type => $_[1] ) }
 
 
 
@@ -274,20 +278,7 @@ A cloned C<DataDog::SpanContext>
 
 =cut
 
-sub with_resource_name { $_[0]->_clone( resource_name => $_[1] ) }
-
-
-
-# _clone
-#
-# Creates a shallow clone of the object, which is fine
-#
-sub _clone {
-    my ( $self, @args ) = @_;
-    
-    bless { %$self, @args }, ref $self;
-    
-}
+sub with_resource_name { $_[0]->clone_with( resource_name => $_[1] ) }
 
 
 

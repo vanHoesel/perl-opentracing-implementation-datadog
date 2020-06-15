@@ -70,7 +70,6 @@ L<DataDog::ScopeManger|OpenTracing::Implementation::DataDog::ScopeManager>
 =cut
 
 has '+scope_manager' => (
-    required => 0,
     default => sub { ScopeManager->new },
 );
 

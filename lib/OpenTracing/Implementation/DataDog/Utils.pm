@@ -6,7 +6,9 @@ OpenTracing::Implementation::DataDog::Utils - DataDog Utilities
 
 =cut
 
-our $VERSION = 'v0.30.1';
+our $VERSION = 'v0.40.0.6-TRIAL';
+
+;
 
 use Exporter qw/import/;
 

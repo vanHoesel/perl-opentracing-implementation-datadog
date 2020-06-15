@@ -4,6 +4,11 @@ package OpenTracing::Implementation::DataDog::SpanContext;
 
 OpenTracing::Implementation::DataDog::SpanContext - A DataDog Implementation
 
+=cut
+
+our $VERSION = 'v0.40.0.6-TRIAL';
+
+
 =head1 SYNOPSIS
 
     use aliased OpenTracing::Implementation::DataDog::SpanContext;

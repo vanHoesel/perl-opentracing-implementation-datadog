@@ -1,6 +1,12 @@
 CHANGE LOG
 ==========
 
+2020-06-15 - v0.40.0.6-TRIAL
+---------------------------
+
+### Changed
+    - More generic code moving etc.
+
 
 2020-06-02 - v0.04_003
 ----------------------
@@ -17,7 +23,7 @@ CHANGE LOG
 ----------------------
 
 ### Changed
-    - Genmeric code has gone to OpenTracing::Roles
+    - Generic code has gone to OpenTracing::Roles
 
 
 2020-02-13 - v0.03

@@ -1,4 +1,4 @@
-requires        "OpenTracing::Role", 'v0.80.0'; # moving more to roles
+requires        "OpenTracing::Role", '>= v0.80.0';
 requires        "OpenTracing::Implementation", '0.03';
 
 requires        "Carp";

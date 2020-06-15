@@ -3,6 +3,9 @@ package OpenTracing::Implementation::DataDog::Tracer;
 use strict;
 use warnings;
 
+
+our $VERSION = 'v0.40.0.6-TRIAL';
+
 =head1 NAME
 
 OpenTracing::Implementation::DataDog::Tracer - Keep track of traces

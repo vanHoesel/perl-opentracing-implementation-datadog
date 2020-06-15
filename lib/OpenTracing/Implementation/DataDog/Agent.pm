@@ -79,6 +79,7 @@ and returns a L<HTTP::Response> compliant response object.
 has user_agent => (
     is => 'lazy',
     isa => HasMethods[qw/request/],
+    handles => { send_http_request => 'request' },
 );
 
 sub _build_user_agent {
@@ -323,7 +324,7 @@ sub _http_post_struct_as_json {
     my $header = ['Content-Type' => 'application/json; charset=UTF-8'];
     my $rqst = HTTP::Request->new( 'POST', $self->uri, $header, $encoded_data );
         
-    my $resp = $self->user_agent->request( $rqst );
+    my $resp = $self->send_http_request( $rqst );
     
     return $resp;
 }

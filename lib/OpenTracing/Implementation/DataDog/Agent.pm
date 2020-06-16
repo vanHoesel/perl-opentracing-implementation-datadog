@@ -9,10 +9,10 @@ OpenTracing::Implementation::DataDog::Agent - A Client that sends off the data
     use alias OpenTracing::Implementation::DataDog::Agent;
     
     my $dd_agent = Agent->new(
-        user_agent => LWP::UserAgent->new();
-        host       => 'localhost',
-        port       => '8126',
-        path       => 'v0.3/traces',
+        http_user_agent => LWP::UserAgent->new();
+        host            => 'localhost',
+        port            => '8126',
+        path            => 'v0.3/traces',
     ); # these are defaults
 
 and later:
@@ -67,7 +67,7 @@ environment variables
 
 
 
-=head2 C<user_agent>
+=head2 C<http_user_agent>
 
 A HTTP User Agent that connects to the locally running DataDog agent. This will
 default to a L<LWP::UserAgent>, but any User Agent will suffice, as long as it
@@ -76,13 +76,13 @@ and returns a L<HTTP::Response> compliant response object.
 
 =cut
 
-has user_agent => (
+has http_user_agent => (
     is => 'lazy',
     isa => HasMethods[qw/request/],
     handles => { send_http_request => 'request' },
 );
 
-sub _build_user_agent {
+sub _build_http_user_agent {
     return LWP::UserAgent->new( )
 }
 

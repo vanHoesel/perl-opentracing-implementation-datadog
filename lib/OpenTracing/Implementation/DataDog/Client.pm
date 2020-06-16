@@ -49,7 +49,7 @@ use HTTP::Request ();
 use JSON::MaybeXS qw(JSON);
 use LWP::UserAgent;
 use PerlX::Maybe qw/maybe provided/;
-use Types::Standard qw/HasMethods/;
+use Types::Standard qw/Enum HasMethods/;
 
 use OpenTracing::Implementation::DataDog::Utils qw(
     nano_seconds
@@ -85,6 +85,21 @@ has http_user_agent => (
 sub _build_http_user_agent {
     return LWP::UserAgent->new( )
 }
+
+
+
+=head2 C<scheme>
+
+The scheme being used, should be either C<http> or C<https>,
+defaults to C<http>
+
+=cut
+
+has scheme => (
+    is => 'ro',
+    isa => Enum[qw/http https/],
+    default => 'http',
+);
 
 
 
@@ -142,7 +157,7 @@ has uri => (
 sub _build_uri {
     my $self = shift;
     
-    return "http://$self->{ host }:$self->{ port }/$self->{ path }"
+    return "$self->{ scheme }://$self->{ host }:$self->{ port }/$self->{ path }"
 }
 #
 # URI::Template is a nicer solution for this and more dynamic

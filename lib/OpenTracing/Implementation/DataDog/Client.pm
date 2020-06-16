@@ -1,14 +1,14 @@
-package OpenTracing::Implementation::DataDog::Agent;
+package OpenTracing::Implementation::DataDog::Client;
 
 =head1 NAME
 
-OpenTracing::Implementation::DataDog::Agent - A Client that sends off the data
+OpenTracing::Implementation::DataDog::Client - A Client that sends off the spans
 
 =head1 SYNOPSIS
 
-    use alias OpenTracing::Implementation::DataDog::Agent;
+    use alias OpenTracing::Implementation::DataDog::Client;
     
-    my $dd_agent = Agent->new(
+    my $datadog_client = ->new(
         http_user_agent => LWP::UserAgent->new();
         host            => 'localhost',
         port            => '8126',
@@ -17,7 +17,7 @@ OpenTracing::Implementation::DataDog::Agent - A Client that sends off the data
 
 and later:
 
-    $dd_agent->send_span( $span );
+    $datadog_client->send_span( $span );
 
 =cut
 
@@ -25,8 +25,8 @@ and later:
 
 =head1 DESCRIPTION
 
-The main responsabillity of this C<Agent> is to provide the C<send_span> method,
-that will send the data to the local running DataDog agent.
+The main responsabillity of this C<Client> is to provide the C<send_span>
+method, that will send the data to the local running DataDog agent.
 
 It does this by calling L<to_struct> that massages the generic OpenTracing data,
 like C<baggage_items> from L<SpanContext> and C<tags> from C<Span>, together

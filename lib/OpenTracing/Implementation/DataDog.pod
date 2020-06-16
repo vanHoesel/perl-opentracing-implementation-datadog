@@ -73,7 +73,7 @@ L<OpenTracing::Implementation::NoOp::Tracer> implementation.
 =item agent
 
 A hasreference with instantiation options for
-L<OpenTracing::Implementation::DataDog::Agent>.
+L<OpenTracing::Implementation::DataDog::Client>.
 
 =item default_context
 

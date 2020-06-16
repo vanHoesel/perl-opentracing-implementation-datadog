@@ -7,7 +7,7 @@ BEGIN {
 # This breaks if it would be set to 0 externally, so, don't do that!!!
 
 
-use aliased 'OpenTracing::Implementation::DataDog::Agent';
+use aliased 'OpenTracing::Implementation::DataDog::Client';
 
 use aliased 'OpenTracing::Implementation::DataDog::Span';
 use aliased 'OpenTracing::Implementation::DataDog::SpanContext';
@@ -33,7 +33,7 @@ my $test_span = Span->new(
 
 $test_span->finish( 83.500 );
 
-my $struct = Agent->to_struct( $test_span );
+my $struct = Client->to_struct( $test_span );
 
 cmp_deeply(
     $struct => {

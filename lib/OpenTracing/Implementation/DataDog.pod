@@ -5,6 +5,26 @@ OpenTracing::Implementation::DataDog - Sending traces to DataDog using Agent
 
 
 
+=head1 VERSION
+
+This is version 'v0.40.0'
+
+
+
+=head1 WARNING
+
+This version is for
+
+=over
+
+=item L<OpenTracing::Interface> version B<v0.204.x>
+
+=item L<OpenTracing::Role> vesion B<v0.81.2>
+
+=back
+
+
+
 =head1 SYNOPSIS
 
     use alias "OpenTracing::Implementation::DataDog", 'Implementation';

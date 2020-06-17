@@ -16,6 +16,7 @@ Makefile.PL
 MANIFEST
 README.md
 t/OpenTracing/Implementation/DataDog/00_use_ok.t
+t/OpenTracing/Implementation/DataDog/10_component.t
 t/OpenTracing/Implementation/DataDog/Client/00_use_ok.t
 t/OpenTracing/Implementation/DataDog/Client/10_uri.t
 t/OpenTracing/Implementation/DataDog/Client/11_to_struct.t

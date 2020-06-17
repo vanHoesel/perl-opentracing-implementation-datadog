@@ -20,6 +20,7 @@ t/OpenTracing/Implementation/DataDog/Client/00_use_ok.t
 t/OpenTracing/Implementation/DataDog/Client/10_uri.t
 t/OpenTracing/Implementation/DataDog/Client/11_to_struct.t
 t/OpenTracing/Implementation/DataDog/Client/12_http_post_struct_as_json.t
+t/OpenTracing/Implementation/DataDog/Client/19_send_span.t
 t/OpenTracing/Implementation/DataDog/Scope/00_use_ok.t
 t/OpenTracing/Implementation/DataDog/Scope/01_can_all_ok.t
 t/OpenTracing/Implementation/DataDog/ScopeManager/01_can_all_ok.t

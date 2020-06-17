@@ -22,11 +22,11 @@ subtest 'new SpanContext with all parameters' => sub {
     
     lives_ok {
         $test_span_context = SpanContext->new(
-            trace_id      => 12345,
+#           trace_id      => 12345, # you can not assign to trace_id!
             service_type  => 'web',
             service_name  => 'srvc name',
             resource_name => 'rsrc name',
-            baggage_items => { foo => 1, bar => 2, trace_id => 67890 },
+            baggage_items => { foo => 1, bar => 2 },
         )
     } "Created a SpanContext" ;
     
@@ -38,9 +38,11 @@ subtest 'new SpanContext with minimal parameters' => sub {
     
     my $test_span_context;
     
+    local $ENV{ DD_SERVICE_NAME } = 'srvc dflt';
+    
     lives_ok {
         $test_span_context = SpanContext->new(
-            service_name  => 'srvc name',
+#           service_name  => 'srvc name', # DD_SERVICE_NMAME
             resource_name => 'rsrc name',
         )
     } "Created a SpanContext" ;
@@ -48,8 +50,11 @@ subtest 'new SpanContext with minimal parameters' => sub {
     ok ( is_Int( $test_span_context->trace_id ),
         "... and default 'trace_id' has been set to an 'Int'"
     );
-    is ( $test_span_context->service_type, 'custom',
+    is ( $test_span_context->get_service_type, 'custom',
         "... and default 'service_type' has been set to 'custom'"
+    );
+    is ( $test_span_context->get_service_name, 'srvc dflt',
+        "... and default 'service_name' has been set to DD_SERVICE_NAME"
     );
     
 };
@@ -59,10 +64,9 @@ subtest 'new SpanContext with minimal parameters' => sub {
 #
 # these assertions are done by Type::Tiny constraints
 #
-subtest 'new SpanContext with errornous or missing parameters' => sub {
+subtest 'new SpanContext with erroneous or missing parameters' => sub {
     
     my $test_span_context;
-    
     
     note 'service_name';
     
@@ -73,7 +77,7 @@ subtest 'new SpanContext with errornous or missing parameters' => sub {
         )
     } qr/Missing required .* service_name/,
     "throws: Missing required 'service_name'" ;
-    
+        
     throws_ok {
         $test_span_context = SpanContext->new(
             service_name  => undef,
@@ -134,16 +138,18 @@ subtest 'new SpanContext with errornous or missing parameters' => sub {
     "throws: Type mismatch: for empty string" ;
     
     
-    note 'trace_id';
-    
-    throws_ok {
-        $test_span_context = SpanContext->new(
-            trace_id      => 'foo',
-            service_name  => 'srvc name',
-            resource_name => 'rsrc name',
-        )
-    } qr/Value "foo" did not pass type constraint "Int"/,
-    "throws: Type mismatch: 'trace_id' must be 'Int'" ;
+#   note 'trace_id';
+#   
+#   throws_ok {
+#       $test_span_context = SpanContext->new(
+#           trace_id      => 'foo',
+#           service_name  => 'srvc name',
+#           resource_name => 'rsrc name',
+#       )
+#   } qr/Value "foo" did not pass type constraint "Int"/,
+#   "throws: Type mismatch: 'trace_id' must be 'Int'" ;
+#   
+#   there should be an entire different error, cause we can not set a trace_id!
     
     
     note 'service_type';

@@ -14,16 +14,19 @@ use aliased 'OpenTracing::Implementation::DataDog::SpanContext';
 
 use Types::Standard qw/is_Int/;
 
-my $test_span_context = SpanContext->new(
+my $some_span_context = SpanContext->new(
     service_name    => 'srvc name',
     resource_name   => 'rsrc name',
     baggage_items   => { foo => 1, bar => 2 },
-);
+)->with_span_id(54365)->with_trace_id(87359);
+
+my $this_span_context = $some_span_context->new_clone(
+)->with_span_id(49603)->with_trace_id($some_span_context->trace_id);
 
 my $test_span = Span->new(
     operation_name  => 'oprt name',
-    child_of        => $test_span_context,
-    context         => $test_span_context,
+    child_of        => $some_span_context,
+    context         => $this_span_context,
     start_time      => 52.750,
     tags            => { baz => 3, qux => 4 },
 );
@@ -34,11 +37,12 @@ my $struct = Agent->to_struct( $test_span );
 
 cmp_deeply(
     $struct => {
-        trace_id   => code( sub { is_Int $_[0] } ),
+        trace_id   => 87359,
+        span_id    => 49603,
         type       => "custom",
         service    => "srvc name",
         resource   => "rsrc name",
-        span_id    => code( sub { is_Int $_[0] } ),
+        parent_id  => 54365,
         name       => "oprt name",
         start      => 52750000000, # nano seconds
         duration   => 30750000000, # nano seconds

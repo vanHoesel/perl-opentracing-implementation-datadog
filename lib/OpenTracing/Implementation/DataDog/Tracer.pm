@@ -43,6 +43,7 @@ with 'OpenTracing::Role::Tracer';
 
 use aliased 'OpenTracing::Implementation::DataDog::Client';
 use aliased 'OpenTracing::Implementation::DataDog::ScopeManager';
+use aliased 'OpenTracing::Implementation::DataDog::Span';
 use aliased 'OpenTracing::Implementation::DataDog::SpanContext';
 
 use Ref::Util qw/is_plain_hashref/;
@@ -124,6 +125,7 @@ sub build_span {
         
         operation_name  => $opts{ operation_name },
         
+        maybe
         child_of        => $opts{ child_of },
         
         maybe

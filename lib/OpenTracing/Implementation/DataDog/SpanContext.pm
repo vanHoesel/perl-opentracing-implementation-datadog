@@ -6,7 +6,7 @@ OpenTracing::Implementation::DataDog::SpanContext - A DataDog Implementation
 
 =cut
 
-our $VERSION = 'v0.40.0.6-TRIAL';
+our $VERSION = 'v0.40.0';
 
 
 =head1 SYNOPSIS

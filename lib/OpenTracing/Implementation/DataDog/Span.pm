@@ -6,7 +6,7 @@ OpenTracing::Implementation::DataDog::Span - A DataDog Implementation for a Span
 
 =cut
 
-our $VERSION = 'v0.40.0.6-TRIAL';
+our $VERSION = 'v0.40.0';
 
 use syntax 'maybe';
 

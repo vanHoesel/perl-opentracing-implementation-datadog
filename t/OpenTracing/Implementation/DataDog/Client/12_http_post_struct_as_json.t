@@ -5,11 +5,14 @@ use Test::URI;
 
 use aliased 'OpenTracing::Implementation::DataDog::Client';
 
+use lib 't/lib';
+use UserAgent::Fake;
+
 subtest "Test a single request" => sub {
     
     my $http_user_agent;
     lives_ok {
-        $http_user_agent = MyMock::UserAgent->new
+        $http_user_agent = UserAgent::Fake->new
     } "Created a mocked 'http_user_agent'"
     
     or return;
@@ -57,18 +60,3 @@ subtest "Test a single request" => sub {
 
 
 done_testing;
-
-package MyMock::UserAgent;
-
-sub new{ my @requests; bless \@requests }
-
-sub request {
-    my $self = shift;
-    push @$self, @_;
-    return 
-}
-
-sub get_all_requests {
-    my $self = shift;
-    return @$self
-}

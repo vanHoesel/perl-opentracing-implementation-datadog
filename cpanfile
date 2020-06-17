@@ -4,6 +4,7 @@ requires        "OpenTracing::Implementation", '0.03';
 requires        "Carp";
 requires        "Exporter";
 requires        "HTTP::Request";
+requires        "HTTP::Response::Maker";
 requires        "JSON::MaybeXS";
 requires        "LWP::UserAgent";
 requires        "Moo";

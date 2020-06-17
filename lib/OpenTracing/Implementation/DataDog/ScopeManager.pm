@@ -29,7 +29,9 @@ use Moo;
 
 use OpenTracing::Implementation::DataDog::Scope;
 
-
+has '+active_scope' => (
+    clearer => 'final_scope',
+);
 
 =head1 DELEGATED INSTANCE METHODS
 
@@ -55,7 +57,10 @@ sub build_scope {
         span                 => $options->{ span },
         finish_span_on_close => $options->{ finish_span_on_close },
         on_close             => sub {
-            $self->set_active_scope( $current_scope );
+            $current_scope ?
+                $self->set_active_scope( $current_scope )
+                :
+                $self->final_scope() #clear
         }
     );
     

@@ -125,6 +125,7 @@ sub build_span {
         
         operation_name  => $opts{ operation_name },
         
+        maybe
         child_of        => $opts{ child_of },
         
         maybe

@@ -4,6 +4,7 @@ requires        "OpenTracing::Implementation", '0.03';
 requires        "Carp";
 requires        "Exporter";
 requires        "HTTP::Request";
+requires        "HTTP::Response::Maker";
 requires        "JSON::MaybeXS";
 requires        "LWP::UserAgent";
 requires        "Moo";
@@ -28,6 +29,8 @@ on 'develop' => sub {
 };
 
 on 'test' => sub {
+    requires    "Test::JSON";
     requires    "Test::Most";
     requires    "Test::OpenTracing::Interface";
+    requires    "Test::URI";
 };

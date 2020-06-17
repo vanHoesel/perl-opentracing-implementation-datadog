@@ -10,6 +10,13 @@ CHANGE LOG
     - Rename to `get_parent_span_id`
 
 
+2020-06-15 - v0.40.0.7-TRIAL
+---------------------------
+
+### Fixed
+    - `get_parent_span_id`
+
+
 2020-06-15 - v0.40.0.6-TRIAL
 ---------------------------
 

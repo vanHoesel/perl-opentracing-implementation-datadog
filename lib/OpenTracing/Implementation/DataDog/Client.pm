@@ -1,23 +1,23 @@
-package OpenTracing::Implementation::DataDog::Agent;
+package OpenTracing::Implementation::DataDog::Client;
 
 =head1 NAME
 
-OpenTracing::Implementation::DataDog::Agent - A Client that sends off the data
+OpenTracing::Implementation::DataDog::Client - A Client that sends off the spans
 
 =head1 SYNOPSIS
 
-    use alias OpenTracing::Implementation::DataDog::Agent;
+    use alias OpenTracing::Implementation::DataDog::Client;
     
-    my $dd_agent = Agent->new(
-        user_agent => LWP::UserAgent->new();
-        host       => 'localhost',
-        port       => '8126',
-        path       => 'v0.3/traces',
+    my $datadog_client = ->new(
+        http_user_agent => LWP::UserAgent->new();
+        host            => 'localhost',
+        port            => '8126',
+        path            => 'v0.3/traces',
     ); # these are defaults
 
 and later:
 
-    $dd_agent->send_span( $span );
+    $datadog_client->send_span( $span );
 
 =cut
 
@@ -25,8 +25,8 @@ and later:
 
 =head1 DESCRIPTION
 
-The main responsabillity of this C<Agent> is to provide the C<send_span> method,
-that will send the data to the local running DataDog agent.
+The main responsabillity of this C<Client> is to provide the C<send_span>
+method, that will send the data to the local running DataDog agent.
 
 It does this by calling L<to_struct> that massages the generic OpenTracing data,
 like C<baggage_items> from L<SpanContext> and C<tags> from C<Span>, together
@@ -49,7 +49,7 @@ use HTTP::Request ();
 use JSON::MaybeXS qw(JSON);
 use LWP::UserAgent;
 use PerlX::Maybe qw/maybe provided/;
-use Types::Standard qw/HasMethods/;
+use Types::Standard qw/Enum HasMethods/;
 
 use OpenTracing::Implementation::DataDog::Utils qw(
     nano_seconds
@@ -67,7 +67,7 @@ environment variables
 
 
 
-=head2 C<user_agent>
+=head2 C<http_user_agent>
 
 A HTTP User Agent that connects to the locally running DataDog agent. This will
 default to a L<LWP::UserAgent>, but any User Agent will suffice, as long as it
@@ -76,15 +76,30 @@ and returns a L<HTTP::Response> compliant response object.
 
 =cut
 
-has user_agent => (
+has http_user_agent => (
     is => 'lazy',
     isa => HasMethods[qw/request/],
     handles => { send_http_request => 'request' },
 );
 
-sub _build_user_agent {
+sub _build_http_user_agent {
     return LWP::UserAgent->new( )
 }
+
+
+
+=head2 C<scheme>
+
+The scheme being used, should be either C<http> or C<https>,
+defaults to C<http>
+
+=cut
+
+has scheme => (
+    is => 'ro',
+    isa => Enum[qw/http https/],
+    default => 'http',
+);
 
 
 
@@ -142,7 +157,7 @@ has uri => (
 sub _build_uri {
     my $self = shift;
     
-    return "http://$self->{ host }:$self->{ port }/$self->{ path }"
+    return "$self->{ scheme }://$self->{ host }:$self->{ port }/$self->{ path }"
 }
 #
 # URI::Template is a nicer solution for this and more dynamic
@@ -202,7 +217,7 @@ sub send_span {
     
     my $data = __PACKAGE__->to_struct( $span );
     
-    my $resp = $self->_http_post_struct_as_json( [[ $data ]] );
+    my $resp = $self->http_post_struct_as_json( [[ $data ]] );
     
     return $resp->is_success
 }
@@ -217,7 +232,7 @@ sub send_span {
 
 =head2 C<to_struct>
 
-Gather required data from the span and it's context, tags and baggage items.
+Gather required data from a single span and its context, tags and baggage items.
 
 =head3 Required Positional Arguments
 
@@ -235,13 +250,13 @@ a hashreference with the following keys:
 
 =item C<trace_id>
 
+=item C<span_id>
+
 =item C<resource>
 
 =item C<service>
 
 =item C<type> (optional)
-
-=item C<span_id>
 
 =item C<name>
 
@@ -310,7 +325,7 @@ sub to_struct {
 
 
 
-sub _http_post_struct_as_json {
+sub http_post_struct_as_json {
     my $self = shift;
     my $struct = shift;
     

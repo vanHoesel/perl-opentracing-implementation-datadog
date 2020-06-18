@@ -29,8 +29,10 @@ on 'develop' => sub {
 };
 
 on 'test' => sub {
+    requires    "Ref::Util";
     requires    "Test::JSON";
     requires    "Test::Most";
+    requires    "Test::MockModule";
     requires    "Test::OpenTracing::Interface";
     requires    "Test::URI";
 };

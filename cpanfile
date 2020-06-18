@@ -1,4 +1,4 @@
-requires        "OpenTracing::Role", '>= v0.81.2';
+requires        "OpenTracing::Role", '>= v0.81.3';
 requires        "OpenTracing::Implementation", '0.03';
 
 requires        "Carp";
@@ -29,8 +29,10 @@ on 'develop' => sub {
 };
 
 on 'test' => sub {
+    requires    "Ref::Util";
     requires    "Test::JSON";
     requires    "Test::Most";
+    requires    "Test::MockModule";
     requires    "Test::OpenTracing::Interface";
     requires    "Test::URI";
 };

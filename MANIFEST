@@ -25,6 +25,7 @@ t/OpenTracing/Implementation/DataDog/Client/19_send_span.t
 t/OpenTracing/Implementation/DataDog/Scope/00_use_ok.t
 t/OpenTracing/Implementation/DataDog/Scope/01_can_all_ok.t
 t/OpenTracing/Implementation/DataDog/ScopeManager/01_can_all_ok.t
+t/OpenTracing/Implementation/DataDog/ScopeManager/09_build_scope.t
 t/OpenTracing/Implementation/DataDog/Span/01_can_all_ok.t
 t/OpenTracing/Implementation/DataDog/SpanContext/00_use_ok.t
 t/OpenTracing/Implementation/DataDog/SpanContext/01_can_all_ok.t
@@ -34,4 +35,6 @@ t/OpenTracing/Implementation/DataDog/SpanContext/11_with_service_name.t
 t/OpenTracing/Implementation/DataDog/SpanContext/11_with_service_type.t
 t/OpenTracing/Implementation/DataDog/Tracer/00_use_ok.t
 t/OpenTracing/Implementation/DataDog/Tracer/01_can_all_ok.t
+t/OpenTracing/Implementation/DataDog/Tracer/09_build_context.t
+t/OpenTracing/Implementation/DataDog/Tracer/09_build_span.t
 t/OpenTracing/Implementation/DataDog/Tracer/11_extract_context.t

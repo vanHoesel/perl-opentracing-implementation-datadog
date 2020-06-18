@@ -39,7 +39,7 @@ agent.
 
 
 
-our $VERSION = 'v0.40.0';
+our $VERSION = 'v0.40.1';
 
 use Moo;
 use MooX::Attribute::ENV;

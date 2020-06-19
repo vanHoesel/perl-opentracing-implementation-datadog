@@ -15,6 +15,7 @@ LICENSE.md
 Makefile.PL
 MANIFEST
 README.md
+t/lib/UserAgent/Fake.pm
 t/OpenTracing/Implementation/DataDog/00_use_ok.t
 t/OpenTracing/Implementation/DataDog/10_component.t
 t/OpenTracing/Implementation/DataDog/Client/00_use_ok.t

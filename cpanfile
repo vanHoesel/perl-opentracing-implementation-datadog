@@ -9,7 +9,7 @@ requires        "JSON::MaybeXS";
 requires        "LWP::UserAgent";
 requires        "Moo";
 requires        "Moo::Role";
-requires        "MooX::Attribute::ENV";
+requires        "MooX::Attribute::ENV", '>= 0.02';
 requires        "MooX::HandlesVia";
 requires        "MooX::Enumeration";
 requires        "PerlX::Maybe";

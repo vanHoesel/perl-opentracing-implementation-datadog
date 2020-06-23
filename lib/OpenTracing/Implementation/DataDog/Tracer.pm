@@ -132,8 +132,24 @@ has default_service_type => (
 
 
 sub extract_context {
-    undef
+    my $self = shift;
+    my $carrier_format = shift;
+    
+    my $extracted_data = $self->extract_data_from_carrier( $carrier_format )
+        or return undef;
+    
+    my $trace_id = delete $extracted_data->{ trace_id }
+        or die;
+    my $context = $self
+        ->build_context( $extracted_data )
+        ->with_trace_id( $trace_id );
+    
+    return $context
 }
+
+
+
+sub extract_data_from_carrier { undef };
 
 
 

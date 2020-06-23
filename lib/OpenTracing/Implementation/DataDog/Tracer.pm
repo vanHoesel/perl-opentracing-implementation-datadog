@@ -47,7 +47,7 @@ use aliased 'OpenTracing::Implementation::DataDog::Span';
 use aliased 'OpenTracing::Implementation::DataDog::SpanContext';
 
 use Ref::Util qw/is_plain_hashref/;
-use Types::Standard qw/Object/;
+use Types::Standard qw/Object Str/;
 
 
 
@@ -103,6 +103,30 @@ has client => (
     coerce
     => sub { is_plain_hashref $_[0] ? Client->new( %{$_[0]} ) : $_[0] },
     default     => sub { {} }, # XXX this does not return an Object !!!
+);
+
+
+
+has default_resource_name => (
+    is          => 'ro',
+    isa         => Str,
+    predicate   => 1,
+);
+
+
+
+has default_service_name => (
+    is          => 'ro',
+    isa         => Str,
+    predicate   => 1,
+);
+
+
+
+has default_service_type => (
+    is          => 'ro',
+    isa         => Str,
+    predicate   => 1,
 );
 
 

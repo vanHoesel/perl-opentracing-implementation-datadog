@@ -78,11 +78,9 @@ subtest "Build with default arguments" => sub {
     my $test_tracer;
     lives_ok {
         $test_tracer = Tracer->new(
-            default_span_context_args => {
-                service_type  => 'cache',
-                service_name  => 'MyCache',
-                resource_name => 'build_with_default_options',
-            }
+            default_service_type  => 'cache',
+            default_service_name  => 'MyCache',
+            default_resource_name => 'build_with_default_options',
         );
     } "Created a test 'Tracer'"
     

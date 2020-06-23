@@ -26,9 +26,7 @@ subtest "Setup the tracer" => sub {
             client => {
                 http_user_agent => $fake_user_agent
             },
-            default_span_context_args => {
-                resource_name  => __FILE__,
-            },
+            default_resource_name  => __FILE__,
         )
     } "Created a Tracer,"
     

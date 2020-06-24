@@ -56,6 +56,10 @@ subtest "Test a single request" => sub {
     is_json $content, qq/[[{"bar":2,"foo":1},{"baz":3},"Hello World"]]/,
         "... and send the expected JSON";
     
+    my $headers = $test_request->headers;
+    is $headers->header('X-Datadog-Trace-Count'), 3,
+        "... that contains the expected number of 'structs'";
+    
 };
 
 

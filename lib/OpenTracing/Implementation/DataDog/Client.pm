@@ -41,6 +41,8 @@ agent.
 
 our $VERSION = 'v0.41.0';
 
+use English;
+
 use Moo;
 use MooX::Attribute::ENV;
 
@@ -334,7 +336,15 @@ sub http_post_struct_as_json {
         if $ENV{OPENTRACING_DEBUG};
     
     
-    my $header = ['Content-Type' => 'application/json; charset=UTF-8'];
+    my $header = [
+        'Content-Type'                  => 'application/json; charset=UTF-8',
+        'Datadog-Meta-Lang'             => 'perl',
+        'Datadog-Meta-Lang-Interpreter' => $EXECUTABLE_NAME,
+        'Datadog-Meta-Lang-Version'     => $PERL_VERSION->stringify,
+        'Datadog-Meta-Tracer-Version'   => $VERSION,
+        'X-Datadog-Trace-Count'         => scalar @{$struct->[0]},
+    ];
+    
     my $rqst = HTTP::Request->new( 'POST', $self->uri, $header, $encoded_data );
         
     my $resp = $self->send_http_request( $rqst );

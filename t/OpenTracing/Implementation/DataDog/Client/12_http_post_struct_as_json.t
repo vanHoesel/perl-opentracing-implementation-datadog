@@ -30,14 +30,14 @@ subtest "Test a single request" => sub {
     
     or return;
     
+    my $struct1 = { foo => 1, bar => 2 };
+    my $struct2 = { baz => 3 };
+    my $struct3 = 'Hello World';
+    
     my $response;
     lives_ok {
         $response = $datadog_client->http_post_struct_as_json(
-            [ 
-                { foo => 1, bar => 2 },
-                { baz => 3 },
-                'Hello World',
-            ]
+            [[ $struct1, $struct2, $struct3 ]]
         )
     } "Made a 'http_post_struct_as_json' call"
     
@@ -53,7 +53,7 @@ subtest "Test a single request" => sub {
     uri_path_ok  ( $uri, '/my/traces');
     
     my $content = $test_request->decoded_content;
-    is_json $content, qq/[{"bar":2,"foo":1},{"baz":3},"Hello World"]/,
+    is_json $content, qq/[[{"bar":2,"foo":1},{"baz":3},"Hello World"]]/,
         "... and send the expected JSON";
     
 };

@@ -289,10 +289,15 @@ sub to_struct {
     
     my $context = $span->get_context();
     
-    my $meta_data = {
+    my %meta_data = (
         $span->get_tags,
         $context->get_baggage_items,
-    };
+    );
+    
+    # fix issue with meta-data, values must be string!
+    %meta_data =
+        map { $_ => "$meta_data{$_}" } keys %meta_data
+    if %meta_data;
     
     my $data = {
         trace_id  => $context->trace_id,
@@ -312,8 +317,8 @@ sub to_struct {
         
 #       error     => ... ,
         
-        provided %$meta_data,
-        meta      => $meta_data,
+        provided %meta_data,
+        meta      => { %meta_data },
         
 #       metrics   => ... ,
     };

@@ -3,6 +3,7 @@ requires        "OpenTracing::Implementation", '0.03';
 
 requires        "Carp";
 requires        "Exporter";
+requires        "Hash::Merge";
 requires        "HTTP::Request";
 requires        "HTTP::Response::Maker";
 requires        "JSON::MaybeXS";

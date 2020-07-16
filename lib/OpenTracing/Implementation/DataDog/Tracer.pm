@@ -46,6 +46,7 @@ use aliased 'OpenTracing::Implementation::DataDog::ScopeManager';
 use aliased 'OpenTracing::Implementation::DataDog::Span';
 use aliased 'OpenTracing::Implementation::DataDog::SpanContext';
 
+use Hash::Merge;
 use Ref::Util qw/is_plain_hashref/;
 use Types::Standard qw/Object Str/;
 
@@ -195,7 +196,32 @@ sub build_context {
 
 
 sub inject_context_into_array_reference  { return $_[1] } # $carrier
-sub inject_context_into_hash_reference   { return $_[1] } # $carrier
+
+
+
+sub inject_context_into_hash_reference   {
+    my $self = shift;
+    my $carrier = shift;
+    my $context = shift;
+    
+    return Hash::Merge->new('RIGHT_PRECEDENT')->merge(
+        $carrier,
+        {
+            opentracing_context => {
+                trace_id  => $context->trace_id,
+                span_id   => $context->span_id,
+                resource  => $context->get_resource_name,
+                service   => $context->get_service_name,
+                maybe
+                type      => $context->get_service_type,
+            }
+            
+        }
+    )
+}
+
+
+
 sub inject_context_into_http_headers     { return $_[1] } # $carrier
 sub extract_context_from_array_reference { return undef }
 sub extract_context_from_hash_reference  { return undef }

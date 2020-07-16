@@ -192,6 +192,15 @@ sub build_context {
     return $span_context
 }
 
+
+
+sub inject_context_into_array_reference  { return $_[1] } # $carrier
+sub inject_context_into_hash_reference   { return $_[1] } # $carrier
+sub inject_context_into_http_headers     { return $_[1] } # $carrier
+sub extract_context_from_array_reference { return undef }
+sub extract_context_from_hash_reference  { return undef }
+sub extract_context_from_http_headers    { return undef }
+
 =head1 SEE ALSO
 
 =over

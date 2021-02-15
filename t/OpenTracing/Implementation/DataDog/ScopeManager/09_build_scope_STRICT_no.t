@@ -1,6 +1,12 @@
 use Test::Most;
 use Test::MockModule;
 
+
+BEGIN {
+    delete $ENV{$_}
+        for qw/EXTENDED_TESTING AUTHOR_TESTING RELEASE_TESTING PERL_STRICT/
+}
+
 use aliased 'OpenTracing::Implementation::DataDog::ScopeManager';
 use aliased 'OpenTracing::Implementation::DataDog::Span';
 
@@ -8,7 +14,7 @@ use Ref::Util qw/is_coderef/;
 
 
 
-subtest "Build with known options" => sub {
+subtest "Build with missing options" => sub {
     
     my $some_span;
     lives_ok {
@@ -32,19 +38,17 @@ subtest "Build with known options" => sub {
     
     my $mock_test = test_datadog_scope(
         {
-            span                 => $some_span,
-            finish_span_on_close => 0,
+            span                 => undef,
+            finish_span_on_close => undef,
             on_close             => code( sub { is_coderef shift } ),
         },
-        "'Scope->new' did receive the expected arguments"
+        "'Scope->new' did introduce undefined arguments, which SHOULD fail"
     );
     
     lives_ok {
         $test_scope_manager->build_scope(
-            span                 => $some_span,
-            finish_span_on_close => 0,
         );
-    } "... during call 'build_scope'"
+    } "And will not die when required arguments are missing, GOOD LUCK!!"
     
     or return;
     

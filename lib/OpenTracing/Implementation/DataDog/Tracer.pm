@@ -38,6 +38,7 @@ and later
 use syntax 'maybe';
 
 use Moo;
+use MooX::Should;
 
 with 'OpenTracing::Role::Tracer';
 
@@ -99,7 +100,7 @@ construct a client object.
 
 has client => (
     is          => 'lazy',
-    isa         => Object,
+    should      => Object,
     handles     => [qw/send_span/],
     coerce
     => sub { is_plain_hashref $_[0] ? Client->new( %{$_[0]} ) : $_[0] },
@@ -110,7 +111,7 @@ has client => (
 
 has default_resource_name => (
     is          => 'ro',
-    isa         => Str,
+    should      => Str,
     predicate   => 1,
 );
 
@@ -118,7 +119,7 @@ has default_resource_name => (
 
 has default_service_name => (
     is          => 'ro',
-    isa         => Str,
+    should      => Str,
     predicate   => 1,
 );
 
@@ -126,7 +127,7 @@ has default_service_name => (
 
 has default_service_type => (
     is          => 'ro',
-    isa         => Str,
+    should      => Str,
     predicate   => 1,
 );
 

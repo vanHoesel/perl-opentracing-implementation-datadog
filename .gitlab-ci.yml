@@ -29,7 +29,7 @@ test:unit:
     - cpanm --notest Time::Zone
     # dev version
     - cpanm --installdeps .
-    - OPENTRACING_INTERFACE=1 prove -MDevel::Cover -l -I lib -r
+    - EXTENDED_TESTING=1 prove -MDevel::Cover -l -I lib -r
   coverage: /Totals+.+s(d+.d+?)$/
 
 package:

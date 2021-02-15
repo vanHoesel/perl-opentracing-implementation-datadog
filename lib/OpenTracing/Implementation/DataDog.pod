@@ -89,11 +89,26 @@ context can be found for C<<$tracer->extract_context>>.
 
 
 
-=head2 OPENTRACING_INTERFACE
+=head2 STRICT
 
-If set to true, this will wrap all methods inside L<Type::Tiny> typechecks, for
-incomming parameters and return values. Beside that, it will add check for
-required methods according to the L<OpenTracing::Interface> API description.
+STRICT on itself not a environment variable, but a boolean constant from
+L<Devel::StrictMode> that uses the following set of environment vatiables:
+
+=over
+
+=item C<PERL_STRICT>
+
+=item C<EXTENDED_TESTING>
+
+=item C<AUTHOR_TESTING>
+
+=item C<RELEASE_TESTING>
+
+=back
+
+When any of those are set, testst are run using type constraints and parameter
+checks are performed, as well as return objects or values. During production it
+is recommended to keep these switched off for performance improvements.
 
 
 

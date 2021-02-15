@@ -16,7 +16,7 @@ scopes and how they are handles in asynchronous environments. If ever.
 
 
 
-our $VERSION = 'v0.42.1';
+our $VERSION = 'v0.43.0';
 
 use Moo;
 

@@ -28,7 +28,7 @@ subtest 'new SpanContext with erroneous or missing parameters' => sub {
             resource_name => 'rsrc name',
         )
     } qr/Missing required .* service_name/,
-    "lives ok: Missing required 'service_name'" ;
+    "throws: Missing required 'service_name'" ;
         
     lives_ok {
         $test_span_context = SpanContext->new(

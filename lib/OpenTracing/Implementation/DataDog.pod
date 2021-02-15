@@ -92,7 +92,7 @@ context can be found for C<<$tracer->extract_context>>.
 =head2 STRICT
 
 STRICT on itself not a environment variable, but a boolean constant from
-L<Devel::StrictMode> that uses the following set of environment vatiables:
+L<Devel::StrictMode> that uses the following set of environment variables:
 
 =over
 
@@ -106,7 +106,7 @@ L<Devel::StrictMode> that uses the following set of environment vatiables:
 
 =back
 
-When any of those are set, testst are run using type constraints and parameter
+When any of those are set, tests are run using type constraints and parameter
 checks are performed, as well as return objects or values. During production it
 is recommended to keep these switched off for performance improvements.
 

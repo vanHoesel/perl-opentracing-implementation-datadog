@@ -45,6 +45,7 @@ use English;
 
 use Moo;
 use MooX::Attribute::ENV;
+use MooX::Should;
 
 use Carp;
 use HTTP::Request ();
@@ -80,7 +81,7 @@ and returns a L<HTTP::Response> compliant response object.
 
 has http_user_agent => (
     is => 'lazy',
-    isa => HasMethods[qw/request/],
+    should => HasMethods[qw/request/],
     handles => { send_http_request => 'request' },
 );
 
@@ -99,7 +100,7 @@ defaults to C<http>
 
 has scheme => (
     is => 'ro',
-    isa => Enum[qw/http https/],
+    should => Enum[qw/http https/],
     default => 'http',
 );
 

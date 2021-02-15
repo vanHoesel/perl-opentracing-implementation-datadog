@@ -11,6 +11,7 @@ our $VERSION = 'v0.42.1';
 use syntax 'maybe';
 
 use Moo;
+use MooX::Should;
 
 with 'OpenTracing::Role::Span';
 
@@ -42,7 +43,7 @@ DataDog requires that its length should not exceed 100 characters.
 =cut
 
 has '+operation_name' => (
-    isa => Str->where( 'length($_) <= 100' ),
+    should => Str->where( 'length($_) <= 100' ),
 );
 
 

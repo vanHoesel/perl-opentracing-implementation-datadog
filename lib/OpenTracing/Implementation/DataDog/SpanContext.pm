@@ -26,8 +26,9 @@ our $VERSION = 'v0.42.1';
 =cut
 
 use Moo;
-use MooX::Enumeration;
+use MooX::Enumeration; # do needs to be the first eXtension
 use MooX::Attribute::ENV;
+use MooX::Should;
 
 with 'OpenTracing::Role::SpanContext';
 
@@ -62,7 +63,7 @@ DataDog requires this to be a unsigned 64-bit integer
 
 has '+trace_id' => (
     is =>'ro',
-    isa => Int,
+    should => Int,
     default => sub{ random_64bit_int() }
 );
 
@@ -76,7 +77,7 @@ DataDog requires this to be a unsigned 64-bit integer
 
 has '+span_id' => (
     is =>'ro',
-    isa => Int,
+    should => Int,
     default => sub{ random_64bit_int() }
 );
 
@@ -103,7 +104,7 @@ has service_name => (
     is              => 'ro',
     env_key         => 'DD_SERVICE_NAME',
     required        => 1,
-    isa             => NonEmptyStr->where( 'length($_) <= 100' ),
+    should          => NonEmptyStr->where( 'length($_) <= 100' ),
     reader          => 'get_service_name',
     trigger         => Lock,
 );
@@ -141,7 +142,7 @@ Good candidates for resource names are URL paths or databasenames and or tables.
 
 has resource_name => (
     is              => 'ro',
-    isa             => NonEmptyStr->where( 'length($_) <= 5000' ),
+    should          => NonEmptyStr->where( 'length($_) <= 5000' ),
     required        => 1,
     reader          => 'get_resource_name',
     trigger         => Lock,

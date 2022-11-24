@@ -109,13 +109,14 @@ has scheme => (
 =head2 C<host>
 
 The host-name where the DataDog agent is running, which defaults to
-C<localhost> or the value of the C<DD_AGENT_HOST> environment variable if set.
+C<localhost> or the value of either C<DD_HOST> or C<DD_AGENT_HOST> environment
+variable if set.
 
 =cut
 
 has host => (
-    is => 'ro',
-    env_key => 'DD_AGENT_HOST',
+    is      => 'ro',
+    env_key => [ 'DD_HOST', 'DD_AGENT_HOST' ],
     default => 'localhost',
 );
 

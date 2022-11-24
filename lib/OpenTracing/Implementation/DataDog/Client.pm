@@ -135,6 +135,18 @@ has port => (
     default => '8126',
 );
 
+=head2 C<env>
+
+The environment name to pass to the agent. By default, no environment is passed.
+
+=cut
+
+has env => (
+    is      => 'ro',
+    env_key => 'DD_ENV',
+    default => undef,
+);
+
 
 
 =head2 C<path>
@@ -219,7 +231,7 @@ sub send_span {
     my $self = shift;
     my $span = shift;
     
-    my $data = __PACKAGE__->to_struct( $span );
+    my $data = $self->to_struct( $span );
     
     my $resp = $self->http_post_struct_as_json( [[ $data ]] );
     
@@ -286,12 +298,15 @@ therefore can not be a intance method of the DataDog::Span object.
 =cut
 
 sub to_struct {
-    my $class = shift;
+    my $self = shift;
     my $span = shift;
     
     my $context = $span->get_context();
     
     my %meta_data = (
+        maybe
+        env => $self->env,
+
         $span->get_tags,
         $context->get_baggage_items,
     );

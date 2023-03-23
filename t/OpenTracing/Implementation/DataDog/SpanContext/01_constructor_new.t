@@ -18,6 +18,7 @@ subtest 'new SpanContext with all parameters' => sub {
             service_name  => 'srvc name',
             resource_name => 'rsrc name',
             baggage_items => { foo => 1, bar => 2 },
+            environment   => 'test envr',
         )
     } "Created a SpanContext" ;
     

@@ -11,6 +11,7 @@ my $some_span_context = SpanContext->new(
     service_name    => 'srvc name',
     resource_name   => 'rsrc name',
     environment     => 'test envr',
+    hostname        => 'test host',
     baggage_items   => { foo => 1, bar => 2 },
 )->with_span_id(54365)->with_trace_id(87359);
 
@@ -37,6 +38,7 @@ cmp_deeply(
         service    => "srvc name",
         resource   => "rsrc name",
         env        => "test envr",
+        hostname   => 'test host',
         parent_id  => 54365,
         name       => "oprt name",
         start      => 52750000000, # nano seconds

@@ -141,6 +141,14 @@ has default_environment => (
 
 
 
+has default_hostname => (
+    is          => 'ro',
+    should      => Str,
+    predicate   => 1,
+);
+
+
+
 sub build_span {
     my $self = shift;
     my %opts = @_;
@@ -188,6 +196,9 @@ sub build_context {
     my $environment   = delete $opts{ environment }
         || $self->default_environment;
     
+    my $hostname   = delete $opts{ hostname }
+        || $self->default_hostname;
+    
     my $span_context = SpanContext->new(
         
         %opts,
@@ -202,6 +213,9 @@ sub build_context {
         
         maybe
         environment     => $environment,
+        
+        maybe
+        hostname        => $hostname,
         
     );
     
@@ -231,6 +245,8 @@ sub inject_context_into_hash_reference   {
                 type          => $context->get_service_type,
                 maybe
                 environment   => $context->get_environment,
+                maybe
+                hostname      => $context->get_hostname,
             }
             
         }

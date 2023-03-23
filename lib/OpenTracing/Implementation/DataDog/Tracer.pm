@@ -133,6 +133,14 @@ has default_service_type => (
 
 
 
+has default_environment => (
+    is          => 'ro',
+    should      => Str,
+    predicate   => 1,
+);
+
+
+
 sub build_span {
     my $self = shift;
     my %opts = @_;
@@ -177,6 +185,9 @@ sub build_context {
     my $service_type  = delete $opts{ service_type }
         || $self->default_service_type;
     
+    my $environment   = delete $opts{ environment }
+        || $self->default_environment;
+    
     my $span_context = SpanContext->new(
         
         %opts,
@@ -188,6 +199,9 @@ sub build_context {
         
         maybe
         service_type    => $service_type,
+        
+        maybe
+        environment     => $environment,
         
     );
     

@@ -223,12 +223,14 @@ sub inject_context_into_hash_reference   {
         $carrier,
         {
             opentracing_context => {
-                trace_id  => $context->trace_id,
-                span_id   => $context->span_id,
-                resource  => $context->get_resource_name,
-                service   => $context->get_service_name,
+                trace_id      => $context->trace_id,
+                span_id       => $context->span_id,
+                resource      => $context->get_resource_name,
+                service       => $context->get_service_name,
                 maybe
-                type      => $context->get_service_type,
+                type          => $context->get_service_type,
+                maybe
+                environment   => $context->get_environment,
             }
             
         }

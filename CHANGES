@@ -1,6 +1,20 @@
 CHANGE LOG
 ==========
 
+2023-03-23 - v0.43.3
+--------------------
+
+### Added
+  - support for setting the Agent URL with the DD_TRACE_AGENT_URL env variable
+  - support for setting a custom hostname with DD_HOSTNAME or constructor params
+
+### Changed
+  - internals of how and where DD_ENV is being handled, in SpanContext
+
+### Removed
+  - support for setting the host with the DD_HOST env variable
+
+
 2022-11-24 - v0.43.2
 --------------------
 

@@ -264,6 +264,8 @@ a hashreference with the following keys:
 
 =item C<env> (optional)
 
+=item C<hostname> (optional)
+
 =item C<name>
 
 =item C<start>
@@ -314,6 +316,9 @@ sub to_struct {
         
         maybe
         env       => $context->get_environment,
+        
+        maybe
+        hostname  => $context->get_hostname,
         
         name      => $span->get_operation_name,
         start     => nano_seconds( $span->start_time() ),

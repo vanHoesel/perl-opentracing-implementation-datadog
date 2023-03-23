@@ -19,6 +19,7 @@ subtest 'new SpanContext with all parameters' => sub {
             resource_name => 'rsrc name',
             baggage_items => { foo => 1, bar => 2 },
             environment   => 'test envr',
+            hostname      => 'host name',
         )
     } "Created a SpanContext" ;
     
@@ -32,6 +33,7 @@ subtest 'new SpanContext with minimal parameters' => sub {
     
     local $ENV{ DD_SERVICE_NAME } = 'srvc dflt';
     local $ENV{ DD_ENV          } = 'test envr';
+    local $ENV{ DD_HOSTNAME     } = 'host dflt';
     
     lives_ok {
         $test_span_context = SpanContext->new(
@@ -51,6 +53,9 @@ subtest 'new SpanContext with minimal parameters' => sub {
     );
     is ( $test_span_context->get_environment, 'test envr',
         "... and default 'environment' has been set to DD_ENV"
+    );
+    is ( $test_span_context->get_hostname, 'host dflt',
+        "... and default 'hostname' has been set to DD_HOSTNAME"
     );
     
 };

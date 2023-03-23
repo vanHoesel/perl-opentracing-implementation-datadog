@@ -135,18 +135,6 @@ has port => (
     default => '8126',
 );
 
-=head2 C<env>
-
-The environment name to pass to the agent. By default, no environment is passed.
-
-=cut
-
-has env => (
-    is      => 'ro',
-    env_key => 'DD_ENV',
-    default => undef,
-);
-
 
 
 =head2 C<path>

@@ -262,6 +262,8 @@ a hashreference with the following keys:
 
 =item C<type> (optional)
 
+=item C<env> (optional)
+
 =item C<name>
 
 =item C<start>

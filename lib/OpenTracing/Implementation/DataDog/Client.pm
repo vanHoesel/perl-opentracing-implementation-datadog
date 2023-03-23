@@ -304,9 +304,6 @@ sub to_struct {
     my $context = $span->get_context();
     
     my %meta_data = (
-        maybe
-        env => $self->env,
-
         $span->get_tags,
         $context->get_baggage_items,
     );
@@ -324,6 +321,9 @@ sub to_struct {
         
         maybe
         type      => $context->get_service_type,
+        
+        maybe
+        env       => $context->get_environment,
         
         name      => $span->get_operation_name,
         start     => nano_seconds( $span->start_time() ),

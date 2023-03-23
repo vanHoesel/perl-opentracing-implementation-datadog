@@ -53,6 +53,7 @@ use JSON::MaybeXS qw(JSON);
 use LWP::UserAgent;
 use PerlX::Maybe qw/maybe provided/;
 use Types::Standard qw/Enum HasMethods/;
+use Types::URI qw/Uri/;
 
 use OpenTracing::Implementation::DataDog::Utils qw(
     nano_seconds
@@ -109,14 +110,13 @@ has scheme => (
 =head2 C<host>
 
 The host-name where the DataDog agent is running, which defaults to
-C<localhost> or the value of either C<DD_HOST> or C<DD_AGENT_HOST> environment
-variable if set.
+C<localhost> or the value of C<DD_AGENT_HOST> environment variable if set.
 
 =cut
 
 has host => (
     is      => 'ro',
-    env_key => [ 'DD_HOST', 'DD_AGENT_HOST' ],
+    env_key => 'DD_AGENT_HOST',
     default => 'localhost',
 );
 
@@ -153,6 +153,23 @@ has path => (
 
 
 
+=head2 C<agent_url>
+
+The complete URL the DataDog agent is listening at, and defaults to the value of
+the C<DD_TRACE_AGENT_URL> environment variable if set. If this is set, it takes
+precedence over any of the other settings.
+
+=cut
+
+has agent_url => (
+    is => 'ro',
+    env_key => 'DD_TRACE_AGENT_URL',
+    default => undef,
+    should  => Uri,
+);
+
+
+
 has uri => (
     is => 'lazy',
     init_arg => undef,
@@ -161,7 +178,10 @@ has uri => (
 sub _build_uri {
     my $self = shift;
     
-    return "$self->{ scheme }://$self->{ host }:$self->{ port }/$self->{ path }"
+    return
+        $self->agent_url
+        //
+        "$self->{ scheme }://$self->{ host }:$self->{ port }/$self->{ path }"
 }
 #
 # URI::Template is a nicer solution for this and more dynamic

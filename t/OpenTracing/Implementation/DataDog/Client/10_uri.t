@@ -8,6 +8,20 @@ undef $ENV{$_} foreach grep { /^DD_/ } keys %ENV;
 
 my @cases = (
     {
+        name        => 'Does create the default URI',
+        make_client => sub {
+            Client->new(
+                http_user_agent => bless({}, 'MyStub::UserAgent'),
+            )
+        },
+        uri => {
+            scheme => 'http',
+            host   => 'localhost',
+            port   => '8126',
+            path   => '/v0.3/traces',
+        },
+    },
+    {
         name        => 'Does create the correct URI from given parameters',
         make_client => sub {
             Client->new(

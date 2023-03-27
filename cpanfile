@@ -13,6 +13,7 @@ requires        "Moo::Role";
 requires        "MooX::Attribute::ENV", '>= 0.04';
 requires        "MooX::HandlesVia";
 requires        "MooX::Enumeration";
+requires        "MooX::ProtectedAttributes";
 requires        "MooX::Should", '>=v0.1.4';
 requires        "PerlX::Maybe";
 requires        "Ref::Util";

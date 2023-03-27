@@ -52,7 +52,7 @@ use HTTP::Request ();
 use JSON::MaybeXS qw(JSON);
 use LWP::UserAgent;
 use PerlX::Maybe qw/maybe provided/;
-use Types::Standard qw/Enum HasMethods/;
+use Types::Standard qw/ArrayRef Enum HasMethods/;
 use Types::URI qw/Uri/;
 
 use OpenTracing::Implementation::DataDog::Utils qw(
@@ -185,6 +185,35 @@ sub _build_uri {
 }
 #
 # URI::Template is a nicer solution for this and more dynamic
+
+
+
+protected_has http_headers => (
+    is  => 'lazy',
+    isa => ArrayRef,
+    init_arg => undef,
+);
+
+sub _build_http_headers {
+    return [
+        'Content-Type'                  => 'application/json; charset=UTF-8',
+        'Datadog-Meta-Lang'             => 'perl',
+        'Datadog-Meta-Lang-Interpreter' => $EXECUTABLE_NAME,
+        'Datadog-Meta-Lang-Version'     => $PERL_VERSION->stringify,
+        'Datadog-Meta-Tracer-Version'   => $VERSION,
+    ]
+}
+
+sub http_headers_with_trace_count {
+    my $self = shift;
+    my $count = shift;
+    
+    return [
+        @{ $self->http_headers // [] },
+        'X-Datadog-Trace-Count'         => $count,
+    ]
+}
+
 
 
 has _json_encoder => (
@@ -373,15 +402,7 @@ sub http_post_struct_as_json {
         if $ENV{OPENTRACING_DEBUG};
     
     
-    my $header = [
-        'Content-Type'                  => 'application/json; charset=UTF-8',
-        'Datadog-Meta-Lang'             => 'perl',
-        'Datadog-Meta-Lang-Interpreter' => $EXECUTABLE_NAME,
-        'Datadog-Meta-Lang-Version'     => $PERL_VERSION->stringify,
-        'Datadog-Meta-Tracer-Version'   => $VERSION,
-        'X-Datadog-Trace-Count'         => scalar @{$struct->[0]},
-    ];
-    
+    my $header = $self->http_headers_with_trace_count( scalar @{$struct->[0]} );
     my $rqst = HTTP::Request->new( 'POST', $self->uri, $header, $encoded_data );
         
     my $resp = $self->send_http_request( $rqst );

@@ -57,6 +57,10 @@ subtest "Test a single request" => sub {
         "... and send the expected JSON";
     
     my $headers = $test_request->headers;
+    
+    is $headers->header('Datadog-Meta-Lang'), 'perl',
+        "... that contains the default Datadog-Meta-Lang [perl]";
+    
     is $headers->header('X-Datadog-Trace-Count'), 3,
         "... that contains the expected number of 'structs'";
     

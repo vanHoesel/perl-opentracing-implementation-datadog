@@ -77,12 +77,12 @@ subtest "Check the requests" => sub {
     cmp_deeply(
         \@structs =>
         [
-            [[ superhashof { name => 'two'   } ]],
-            [[ superhashof { name => 'one_a' } ]],
-            [[ superhashof { name => 'two'   } ]],
-            [[ superhashof { name => 'two'   } ]],
-            [[ superhashof { name => 'one_b' } ]],
-            [[ superhashof { name => 'zero'  } ]],
+            [[ ( superhashof { name => 'two'   } ) ]],
+            [[ ( superhashof { name => 'one_a' } ) ]],
+            [[ ( superhashof { name => 'two'   } ) ]],
+            [[ ( superhashof { name => 'two'   } ) ]],
+            [[ ( superhashof { name => 'one_b' } ) ]],
+            [[ ( superhashof { name => 'zero'  } ) ]],
         ],
         "Got the right spans in the expected order"
     );

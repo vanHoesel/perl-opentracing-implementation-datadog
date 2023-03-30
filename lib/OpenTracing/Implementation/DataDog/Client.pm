@@ -310,6 +310,9 @@ sub send_span {
     
     $self->_buffer_span($span);
     
+    return $self->_span_buffer_size()
+        unless $self->_should_flush_span_buffer();
+    
     return $self->_flush_span_buffer();
 }
 

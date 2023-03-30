@@ -78,6 +78,8 @@ subtest "Create a span and capture the request" => sub {
     
     ok $send_ok, "... which returned okay";
     
+    undef $datadog_client;
+    
     my @requests = $http_user_agent->get_all_requests();
     my $test_request = $requests[0];
     my $content = $test_request->decoded_content;

@@ -606,4 +606,17 @@ sub _span_buffer_threshold_reached {
     return $self->_span_buffer_size >= $self->span_buffer_threshold
 }
 
+
+
+# DEMOLISH
+#
+# This should not happen, but just in case something went completely wrong, this
+# will try to flush the buffered spans as a last resort.
+#
+sub DEMOLISH {
+    my ($self) = @_;
+    $self->_flush_span_buffer();    # send any leftover spans
+    return;
+}
+
 1;

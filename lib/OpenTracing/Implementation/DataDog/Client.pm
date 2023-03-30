@@ -55,7 +55,7 @@ use HTTP::Request ();
 use JSON::MaybeXS qw(JSON);
 use LWP::UserAgent;
 use PerlX::Maybe qw/maybe provided/;
-use Types::Standard qw/ArrayRef Enum HasMethods Maybe Str/;
+use Types::Standard qw/ArrayRef Bool Enum HasMethods Maybe Str/;
 use Types::Common::Numeric qw/IntRange/;
 
 use OpenTracing::Implementation::DataDog::Utils qw(
@@ -265,6 +265,19 @@ protected_has _span_buffer => (
        _buffered_spans      => 'all',
        _empty_span_buffer   => 'clear',
    },
+);
+
+
+
+protected_has _client_halted => (
+    is            => 'rw',
+    isa           => Bool,
+    reader        => '_has_client_halted',
+    default       => 0,
+    handles_via   => 'Bool',
+    handles       => {
+       _halt_client => 'set'
+    }
 );
 
 

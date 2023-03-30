@@ -45,6 +45,8 @@ use English;
 
 use Moo;
 use MooX::Attribute::ENV;
+use MooX::HandlesVia;
+use MooX::ProtectedAttributes;
 use MooX::Should;
 
 use Carp;
@@ -52,7 +54,7 @@ use HTTP::Request ();
 use JSON::MaybeXS qw(JSON);
 use LWP::UserAgent;
 use PerlX::Maybe qw/maybe provided/;
-use Types::Standard qw/Enum HasMethods/;
+use Types::Standard qw/ArrayRef Enum HasMethods/;
 use Types::URI qw/Uri/;
 
 use OpenTracing::Implementation::DataDog::Utils qw(
@@ -83,7 +85,7 @@ and returns a L<HTTP::Response> compliant response object.
 has http_user_agent => (
     is => 'lazy',
     should => HasMethods[qw/request/],
-    handles => { send_http_request => 'request' },
+    handles => { _send_http_request => 'request' },
 );
 
 sub _build_http_user_agent {
@@ -187,10 +189,33 @@ sub _build_uri {
 # URI::Template is a nicer solution for this and more dynamic
 
 
+
+protected_has _default_http_headers => (
+    is          => 'lazy',
+    isa         => ArrayRef,
+    init_arg    => undef,
+    handles_via => 'Array',
+    handles     => {
+        _default_http_headers_list => 'all',
+    },
+);
+
+sub _build__default_http_headers {
+    return [
+        'Content-Type'                  => 'application/json; charset=UTF-8',
+        'Datadog-Meta-Lang'             => 'perl',
+        'Datadog-Meta-Lang-Interpreter' => $EXECUTABLE_NAME,
+        'Datadog-Meta-Lang-Version'     => $PERL_VERSION->stringify,
+        'Datadog-Meta-Tracer-Version'   => $VERSION,
+    ]
+}
+
+
+
 has _json_encoder => (
     is              => 'lazy',
     init_arg        => undef,
-    handles         => { json_encode => 'encode' },
+    handles         => { _json_encode => 'encode' },
 );
 
 sub _build__json_encoder {
@@ -241,7 +266,7 @@ sub send_span {
     
     my $data = $self->to_struct( $span );
     
-    my $resp = $self->http_post_struct_as_json( [[ $data ]] );
+    my $resp = $self->_http_post_struct_as_json( [[ $data ]] );
     
     return $resp->is_success
 }
@@ -364,33 +389,6 @@ sub to_struct {
 
 
 
-sub http_post_struct_as_json {
-    my $self = shift;
-    my $struct = shift;
-    
-    my $encoded_data = $self->json_encode($struct);
-    do { warn "$encoded_data\n" }
-        if $ENV{OPENTRACING_DEBUG};
-    
-    
-    my $header = [
-        'Content-Type'                  => 'application/json; charset=UTF-8',
-        'Datadog-Meta-Lang'             => 'perl',
-        'Datadog-Meta-Lang-Interpreter' => $EXECUTABLE_NAME,
-        'Datadog-Meta-Lang-Version'     => $PERL_VERSION->stringify,
-        'Datadog-Meta-Tracer-Version'   => $VERSION,
-        'X-Datadog-Trace-Count'         => scalar @{$struct->[0]},
-    ];
-    
-    my $rqst = HTTP::Request->new( 'POST', $self->uri, $header, $encoded_data );
-        
-    my $resp = $self->send_http_request( $rqst );
-    
-    return $resp;
-}
-
-
-
 =head1 SEE ALSO
 
 =over
@@ -444,5 +442,53 @@ For details, see the full text of the license in the file LICENSE.
 
 
 =cut
+
+
+
+# _http_headers_with_trace_count
+#
+# Returns a list of HTTP Headers needed for DataDog
+#
+# This feature was originally added, so the Trace-Count could dynamically set
+# per request. That was a design flaw, and now the count is hardcoded to '1',
+# until we figured out how to send multiple spans.
+#
+sub _http_headers_with_trace_count {
+    my $self = shift;
+    my $count = shift;
+    
+    return (
+        $self->_default_http_headers_list,
+        
+        maybe
+        'X-Datadog-Trace-Count' => $count,
+    )
+}
+
+
+
+# _http_post_struct_as_json
+#
+# Takes a given data structure and sends an HTTP POST request to the tracing
+# agent.
+#
+# It is the caller's responsibility to generate the correct data structure!
+#
+# Returns an HTTP::Response object, which may indicate a failure.
+sub _http_post_struct_as_json {
+    my $self = shift;
+    my $struct = shift;
+    
+    my $encoded_data = $self->_json_encode($struct);
+    do { warn "$encoded_data\n" }
+        if $ENV{OPENTRACING_DEBUG};
+    
+    my @headers = $self->_http_headers_with_trace_count( scalar @{$struct->[0]} );
+    my $rqst = HTTP::Request->new( 'POST', $self->uri, \@headers, $encoded_data );
+        
+    my $resp = $self->_send_http_request( $rqst );
+    
+    return $resp;
+}
 
 1;

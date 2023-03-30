@@ -262,6 +262,7 @@ protected_has _span_buffer => (
    handles_via => 'Array',
    handles     => {
        _buffer_span         => 'push',
+       _span_buffer_size    => 'count',
        _buffered_spans      => 'all',
        _empty_span_buffer   => 'clear',
    },
@@ -554,6 +555,52 @@ sub _http_post_struct_as_json {
     my $resp = $self->_send_http_request( $rqst );
     
     return $resp;
+}
+
+
+
+# _last_buffered_span
+#
+# Returns the last span added to the buffer.
+#
+# nothing special, but just easier to read the code where it is used
+#
+sub _last_buffered_span {
+    my $self = shift;
+    
+    return $self->_span_buffer->[-1]
+}
+
+
+
+# _should_flush_span_buffer
+#
+# Returns a 'Boolean'
+#
+# For obvious reasons, it should be flushed if the limit has been reached.
+# But another reason is when the root-span has been just added. It is the first
+# span being created, but it is therefor the last one being closed and send.
+#
+sub _should_flush_span_buffer {
+    my $self = shift;
+    
+    return (
+        $self->_last_buffered_span()->is_root_span
+        or
+        $self->_span_buffer_threshold_reached()
+    );
+}
+
+
+
+# _span_buffer_threshold_reached
+#
+# Returns a 'Boolean', being 'true' once the limit has been reached
+#
+sub _span_buffer_threshold_reached {
+    my $self = shift;
+    
+    return $self->_span_buffer_size >= $self->span_buffer_threshold
 }
 
 1;

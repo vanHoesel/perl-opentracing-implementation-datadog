@@ -231,6 +231,11 @@ protected_has _span_buffer => (
    isa         => ArrayRef,
    init_args   => undef,
    default     => sub { [] },
+   handles_via => 'Array',
+   handles     => {
+       _buffered_spans      => 'all',
+       _empty_span_buffer   => 'clear',
+   },
 );
 
 
@@ -451,6 +456,30 @@ For details, see the full text of the license in the file LICENSE.
 
 
 =cut
+
+
+
+# _flush_span_buffer
+#
+# Flushes the spans in the span buffer and send them off to the DataDog agent
+# over HTTP.
+#
+# Returns the number off flushed spans or `undef` in case of an error.
+#
+sub _flush_span_buffer {
+    my $self = shift;
+    
+    my @structs = map {$self->to_struct($_) } $self->_buffered_spans();
+    
+    my $resp = $self->_http_post_struct_as_json( [ \@structs ] );
+    
+    return
+        unless $resp->is_success;
+    
+    $self->_empty_span_buffer();
+    
+    return scalar @structs;
+}
 
 
 

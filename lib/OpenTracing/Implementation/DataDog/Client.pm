@@ -210,18 +210,6 @@ sub _build__default_http_headers {
     ]
 }
 
-sub _http_headers_with_trace_count {
-    my $self = shift;
-    my $count = shift;
-    
-    return (
-        $self->_default_http_headers_list,
-        
-        maybe
-        'X-Datadog-Trace-Count' => $count,
-    )
-}
-
 
 
 has _json_encoder => (
@@ -401,25 +389,6 @@ sub to_struct {
 
 
 
-sub _http_post_struct_as_json {
-    my $self = shift;
-    my $struct = shift;
-    
-    my $encoded_data = $self->_json_encode($struct);
-    do { warn "$encoded_data\n" }
-        if $ENV{OPENTRACING_DEBUG};
-    
-    
-    my @headers = $self->_http_headers_with_trace_count( 1 );
-    my $rqst = HTTP::Request->new( 'POST', $self->uri, \@headers, $encoded_data );
-        
-    my $resp = $self->_send_http_request( $rqst );
-    
-    return $resp;
-}
-
-
-
 =head1 SEE ALSO
 
 =over
@@ -473,5 +442,53 @@ For details, see the full text of the license in the file LICENSE.
 
 
 =cut
+
+
+
+# _http_headers_with_trace_count
+#
+# Returns a list of HTTP Headers needed for DataDog
+#
+# This feature was originally added, so the Trace-Count could dynamically set
+# per request. That was a design flaw, and now the count is hardcoded to '1',
+# until we figured out how to send multiple spans.
+#
+sub _http_headers_with_trace_count {
+    my $self = shift;
+    my $count = shift;
+    
+    return (
+        $self->_default_http_headers_list,
+        
+        maybe
+        'X-Datadog-Trace-Count' => $count,
+    )
+}
+
+
+
+# _http_post_struct_as_json
+#
+# Takes a given data structure and sends an HTTP POST request to the tracing
+# agent.
+#
+# It is the caller's responsibility to generate the correct data structure!
+#
+# Returns an HTTP::Response object, which may indicate a failure.
+sub _http_post_struct_as_json {
+    my $self = shift;
+    my $struct = shift;
+    
+    my $encoded_data = $self->_json_encode($struct);
+    do { warn "$encoded_data\n" }
+        if $ENV{OPENTRACING_DEBUG};
+    
+    my @headers = $self->_http_headers_with_trace_count( scalar @{$struct->[0]} );
+    my $rqst = HTTP::Request->new( 'POST', $self->uri, \@headers, $encoded_data );
+        
+    my $resp = $self->_send_http_request( $rqst );
+    
+    return $resp;
+}
 
 1;

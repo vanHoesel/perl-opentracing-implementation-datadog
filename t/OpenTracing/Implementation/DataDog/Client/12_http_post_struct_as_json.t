@@ -61,7 +61,7 @@ subtest "Test a single request" => sub {
     is $headers->header('Datadog-Meta-Lang'), 'perl',
         "... that contains the default Datadog-Meta-Lang [perl]";
     
-    is $headers->header('X-Datadog-Trace-Count'), 1, # we only send 1 TRACE
+    is $headers->header('X-Datadog-Trace-Count'), 3,
         "... that contains the expected number of 'structs'";
     
 };

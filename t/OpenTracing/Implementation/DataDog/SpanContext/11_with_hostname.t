@@ -15,7 +15,7 @@ subtest 'Clone with service_name' => sub {
 #           trace_id      => 12345, # you can not assign to trace_id!
             service_name  => 'srvc 1',
             resource_name => 'rsrc 1',
-            hostname      => 'host 1'
+            hostname      => 'host 1',
             baggage_items => { foo => 1, bar => 2 },
         )
     } "Created a SpanContext [1]"

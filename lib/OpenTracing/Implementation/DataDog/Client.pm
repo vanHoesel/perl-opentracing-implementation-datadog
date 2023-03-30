@@ -514,10 +514,8 @@ sub _flush_span_buffer {
     
     my @structs = map {$self->to_struct($_) } $self->_buffered_spans();
     
-    my $resp = $self->_http_post_struct_as_json( [ \@structs ] );
-    
-    return
-        unless $resp->is_success;
+    my $resp = $self->_http_post_struct_as_json( [ \@structs ] )
+        or return;
     
     $self->_empty_span_buffer();
     
@@ -555,7 +553,8 @@ sub _http_headers_with_trace_count {
 #
 # It is the caller's responsibility to generate the correct data structure!
 #
-# Returns an HTTP::Response object, which may indicate a failure.
+# Maybe returns an HTTP::Response object, which may indicate a failure.
+#
 sub _http_post_struct_as_json {
     my $self = shift;
     my $struct = shift;
@@ -566,8 +565,19 @@ sub _http_post_struct_as_json {
     
     my @headers = $self->_http_headers_with_trace_count( scalar @{$struct->[0]} );
     my $rqst = HTTP::Request->new( 'POST', $self->uri, \@headers, $encoded_data );
-        
+    
     my $resp = $self->_send_http_request( $rqst );
+    if ( $resp->is_error ) {
+        #
+        # not interested in what the error actually has been, no matter what it
+        # was, this client will be halted, be it an error in the data send (XXX)
+        # or a problem with the recipient tracing agent.
+        #
+        $self->_halt_client() if $resp->is_error;
+        warn sprintf "DataDog::Client being halted due to an error [%s]\n",
+            $resp->status_line;
+        return;
+    }
     
     return $resp;
 }

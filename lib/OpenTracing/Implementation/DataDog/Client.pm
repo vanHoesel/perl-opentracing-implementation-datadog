@@ -226,6 +226,15 @@ sub _build__json_encoder {
 
 
 
+protected_has _span_buffer => (
+   is          => 'rw',
+   isa         => ArrayRef,
+   init_args   => undef,
+   default     => sub { [] },
+);
+
+
+
 =head1 DELEGATED INSTANCE METHODS
 
 The following method(s) are required by the L<DataDog::Tracer|

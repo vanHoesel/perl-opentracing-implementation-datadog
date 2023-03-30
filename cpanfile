@@ -21,6 +21,7 @@ requires        "Ref::Util";
 requires        "Sub::Trigger::Lock";
 requires        "Syntax::Feature::Maybe";
 requires        "Try::Tiny";
+requires        "Types::Common::Numeric";
 requires        "Types::Common::String";
 requires        "Types::Interface";
 requires        "Types::Standard";

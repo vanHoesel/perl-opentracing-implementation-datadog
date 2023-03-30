@@ -55,11 +55,14 @@ use JSON::MaybeXS qw(JSON);
 use LWP::UserAgent;
 use PerlX::Maybe qw/maybe provided/;
 use Types::Standard qw/ArrayRef Enum HasMethods/;
+use Types::Common::Numeric qw/IntRange/;
 use Types::URI qw/Uri/;
 
 use OpenTracing::Implementation::DataDog::Utils qw(
     nano_seconds
 );
+
+use constant MAX_SPANS => 20_000; # this is just an arbitrary, hardcoded number
 
 
 
@@ -223,6 +226,31 @@ sub _build__json_encoder {
 }
 #
 # I just love readable and consistant JSONs
+
+
+
+=head2 C<span_buffer_threshold>
+
+This sets the size limit of the span buffer. When this number is reached, this
+C<Client> will send off the buffered spans using the internal C<user_agent>.
+
+This number can be set on instantiation, or will take it from the
+C<DD_TRACE_PARTIAL_FLUSH_MIN_SPANS> environment variable. If nothing is set, it
+defaults to 100.
+
+The number can not be set to anything higher than 20_000.
+
+If this number is C<0> (zero), spans will be sent with each call to
+C<send_span>.
+
+=cut
+
+has span_buffer_threshold => (
+    is      => 'rw',
+    isa     => IntRange[ 0, MAX_SPANS ],
+    env_key => 'DD_TRACE_PARTIAL_FLUSH_MIN_SPANS',
+    default => 100,
+);
 
 
 

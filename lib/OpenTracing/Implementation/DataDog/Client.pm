@@ -45,6 +45,8 @@ use English;
 
 use Moo;
 use MooX::Attribute::ENV;
+use MooX::HandlesVia;
+use MooX::ProtectedAttributes;
 use MooX::Should;
 
 use Carp;
@@ -83,7 +85,7 @@ and returns a L<HTTP::Response> compliant response object.
 has http_user_agent => (
     is => 'lazy',
     should => HasMethods[qw/request/],
-    handles => { send_http_request => 'request' },
+    handles => { _send_http_request => 'request' },
 );
 
 sub _build_http_user_agent {
@@ -188,13 +190,17 @@ sub _build_uri {
 
 
 
-protected_has http_headers => (
-    is  => 'lazy',
-    isa => ArrayRef,
-    init_arg => undef,
+protected_has _default_http_headers => (
+    is          => 'lazy',
+    isa         => ArrayRef,
+    init_arg    => undef,
+    handles_via => 'Array',
+    handles     => {
+        _default_http_headers_list => 'all',
+    },
 );
 
-sub _build_http_headers {
+sub _build__default_http_headers {
     return [
         'Content-Type'                  => 'application/json; charset=UTF-8',
         'Datadog-Meta-Lang'             => 'perl',
@@ -204,14 +210,16 @@ sub _build_http_headers {
     ]
 }
 
-sub http_headers_with_trace_count {
+sub _http_headers_with_trace_count {
     my $self = shift;
     my $count = shift;
     
-    return [
-        @{ $self->http_headers // [] },
-        'X-Datadog-Trace-Count'         => $count,
-    ]
+    return (
+        $self->_default_http_headers_list,
+        
+        maybe
+        'X-Datadog-Trace-Count' => $count,
+    )
 }
 
 
@@ -219,7 +227,7 @@ sub http_headers_with_trace_count {
 has _json_encoder => (
     is              => 'lazy',
     init_arg        => undef,
-    handles         => { json_encode => 'encode' },
+    handles         => { _json_encode => 'encode' },
 );
 
 sub _build__json_encoder {
@@ -270,7 +278,7 @@ sub send_span {
     
     my $data = $self->to_struct( $span );
     
-    my $resp = $self->http_post_struct_as_json( [[ $data ]] );
+    my $resp = $self->_http_post_struct_as_json( [[ $data ]] );
     
     return $resp->is_success
 }
@@ -393,19 +401,19 @@ sub to_struct {
 
 
 
-sub http_post_struct_as_json {
+sub _http_post_struct_as_json {
     my $self = shift;
     my $struct = shift;
     
-    my $encoded_data = $self->json_encode($struct);
+    my $encoded_data = $self->_json_encode($struct);
     do { warn "$encoded_data\n" }
         if $ENV{OPENTRACING_DEBUG};
     
     
-    my $header = $self->http_headers_with_trace_count( scalar @{$struct->[0]} );
-    my $rqst = HTTP::Request->new( 'POST', $self->uri, $header, $encoded_data );
+    my @headers = $self->_http_headers_with_trace_count( 1 );
+    my $rqst = HTTP::Request->new( 'POST', $self->uri, \@headers, $encoded_data );
         
-    my $resp = $self->send_http_request( $rqst );
+    my $resp = $self->_send_http_request( $rqst );
     
     return $resp;
 }

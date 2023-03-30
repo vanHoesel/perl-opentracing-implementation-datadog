@@ -36,7 +36,7 @@ subtest "Test a single request" => sub {
     
     my $response;
     lives_ok {
-        $response = $datadog_client->http_post_struct_as_json(
+        $response = $datadog_client->_http_post_struct_as_json(
             [[ $struct1, $struct2, $struct3 ]]
         )
     } "Made a 'http_post_struct_as_json' call"
@@ -61,7 +61,7 @@ subtest "Test a single request" => sub {
     is $headers->header('Datadog-Meta-Lang'), 'perl',
         "... that contains the default Datadog-Meta-Lang [perl]";
     
-    is $headers->header('X-Datadog-Trace-Count'), 3,
+    is $headers->header('X-Datadog-Trace-Count'), 1, # we only send 1 TRACE
         "... that contains the expected number of 'structs'";
     
 };

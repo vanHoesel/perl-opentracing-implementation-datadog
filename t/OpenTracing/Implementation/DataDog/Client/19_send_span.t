@@ -78,8 +78,18 @@ subtest "Create a span and capture the request" => sub {
     
     ok $send_ok, "... which returned okay";
     
+    is scalar $http_user_agent->get_all_requests(), 0,
+        "... but did not made any http request yet, this was not a root-span";
+    
+    undef $datadog_client;
+    
+    is scalar $http_user_agent->get_all_requests(), 1,
+        "... and made any http request after 'DEMOLISH'";
+    
     my @requests = $http_user_agent->get_all_requests();
     my $test_request = $requests[0];
+    
+    
     my $content = $test_request->decoded_content;
     
     my $struct = decode_json $content;

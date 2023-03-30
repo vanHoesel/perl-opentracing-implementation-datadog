@@ -55,11 +55,14 @@ use JSON::MaybeXS qw(JSON);
 use LWP::UserAgent;
 use PerlX::Maybe qw/maybe provided/;
 use Types::Standard qw/ArrayRef Enum HasMethods/;
+use Types::Common::Numeric qw/IntRange/;
 use Types::URI qw/Uri/;
 
 use OpenTracing::Implementation::DataDog::Utils qw(
     nano_seconds
 );
+
+use constant MAX_SPANS => 20_000; # this is just an arbitrary, hardcoded number
 
 
 
@@ -226,6 +229,47 @@ sub _build__json_encoder {
 
 
 
+=head2 C<span_buffer_threshold>
+
+This sets the size limit of the span buffer. When this number is reached, this
+C<Client> will send off the buffered spans using the internal C<user_agent>.
+
+This number can be set on instantiation, or will take it from the
+C<DD_TRACE_PARTIAL_FLUSH_MIN_SPANS> environment variable. If nothing is set, it
+defaults to 100.
+
+The number can not be set to anything higher than 20_000.
+
+If this number is C<0> (zero), spans will be sent with each call to
+C<send_span>.
+
+=cut
+
+has span_buffer_threshold => (
+    is      => 'rw',
+    isa     => IntRange[ 0, MAX_SPANS ],
+    env_key => 'DD_TRACE_PARTIAL_FLUSH_MIN_SPANS',
+    default => 100,
+);
+
+
+
+protected_has _span_buffer => (
+   is          => 'rw',
+   isa         => ArrayRef,
+   init_args   => undef,
+   default     => sub { [] },
+   handles_via => 'Array',
+   handles     => {
+       _buffer_span         => 'push',
+       _span_buffer_size    => 'count',
+       _buffered_spans      => 'all',
+       _empty_span_buffer   => 'clear',
+   },
+);
+
+
+
 =head1 DELEGATED INSTANCE METHODS
 
 The following method(s) are required by the L<DataDog::Tracer|
@@ -264,11 +308,12 @@ sub send_span {
     my $self = shift;
     my $span = shift;
     
-    my $data = $self->to_struct( $span );
+    $self->_buffer_span($span);
     
-    my $resp = $self->_http_post_struct_as_json( [[ $data ]] );
+    return $self->_span_buffer_size()
+        unless $self->_should_flush_span_buffer();
     
-    return $resp->is_success
+    return $self->_flush_span_buffer();
 }
 
 
@@ -445,6 +490,30 @@ For details, see the full text of the license in the file LICENSE.
 
 
 
+# _flush_span_buffer
+#
+# Flushes the spans in the span buffer and send them off to the DataDog agent
+# over HTTP.
+#
+# Returns the number off flushed spans or `undef` in case of an error.
+#
+sub _flush_span_buffer {
+    my $self = shift;
+    
+    my @structs = map {$self->to_struct($_) } $self->_buffered_spans();
+    
+    my $resp = $self->_http_post_struct_as_json( [ \@structs ] );
+    
+    return
+        unless $resp->is_success;
+    
+    $self->_empty_span_buffer();
+    
+    return scalar @structs;
+}
+
+
+
 # _http_headers_with_trace_count
 #
 # Returns a list of HTTP Headers needed for DataDog
@@ -489,6 +558,65 @@ sub _http_post_struct_as_json {
     my $resp = $self->_send_http_request( $rqst );
     
     return $resp;
+}
+
+
+
+# _last_buffered_span
+#
+# Returns the last span added to the buffer.
+#
+# nothing special, but just easier to read the code where it is used
+#
+sub _last_buffered_span {
+    my $self = shift;
+    
+    return $self->_span_buffer->[-1]
+}
+
+
+
+# _should_flush_span_buffer
+#
+# Returns a 'Boolean'
+#
+# For obvious reasons, it should be flushed if the limit has been reached.
+# But another reason is when the root-span has been just added. It is the first
+# span being created, but it is therefor the last one being closed and send.
+#
+sub _should_flush_span_buffer {
+    my $self = shift;
+    
+    return (
+        $self->_last_buffered_span()->is_root_span
+        or
+        $self->_span_buffer_threshold_reached()
+    );
+}
+
+
+
+# _span_buffer_threshold_reached
+#
+# Returns a 'Boolean', being 'true' once the limit has been reached
+#
+sub _span_buffer_threshold_reached {
+    my $self = shift;
+    
+    return $self->_span_buffer_size >= $self->span_buffer_threshold
+}
+
+
+
+# DEMOLISH
+#
+# This should not happen, but just in case something went completely wrong, this
+# will try to flush the buffered spans as a last resort.
+#
+sub DEMOLISH {
+    my ($self) = @_;
+    $self->_flush_span_buffer();    # send any leftover spans
+    return;
 }
 
 1;

@@ -1,4 +1,4 @@
-requires        "OpenTracing::Role", '>= v0.85.0';
+requires        "OpenTracing::Role", '>= v0.86.0';
 requires        "OpenTracing::Implementation", '0.03';
 
 requires        "Carp";
@@ -21,6 +21,7 @@ requires        "Ref::Util";
 requires        "Sub::Trigger::Lock";
 requires        "Syntax::Feature::Maybe";
 requires        "Try::Tiny";
+requires        "Types::Common::Numeric";
 requires        "Types::Common::String";
 requires        "Types::Interface";
 requires        "Types::Standard";

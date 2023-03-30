@@ -233,6 +233,7 @@ protected_has _span_buffer => (
    default     => sub { [] },
    handles_via => 'Array',
    handles     => {
+       _buffer_span         => 'push',
        _buffered_spans      => 'all',
        _empty_span_buffer   => 'clear',
    },
@@ -278,11 +279,9 @@ sub send_span {
     my $self = shift;
     my $span = shift;
     
-    my $data = $self->to_struct( $span );
+    $self->_buffer_span($span);
     
-    my $resp = $self->_http_post_struct_as_json( [[ $data ]] );
-    
-    return $resp->is_success
+    return $self->_flush_span_buffer();
 }
 
 

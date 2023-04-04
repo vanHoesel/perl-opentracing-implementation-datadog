@@ -17,15 +17,12 @@ subtest "Test a single request" => sub {
     
     or return;
     
+    local $ENV{DD_TRACE_AGENT_URL} = 'https://test-host:1234/my/traces';
     my $datadog_client;
     lives_ok {
         $datadog_client = Client->new(
             http_user_agent => $http_user_agent,
-            scheme          => 'https',
-            host            => 'test-host',
-            port            => '1234',
-            path            => 'my/traces',
-        ) # we do need defaults here, to not break when ENV was set already
+        )
     } "Created a 'datadog_client'"
     
     or return;

@@ -50,13 +50,13 @@ use MooX::ProtectedAttributes;
 use MooX::Should;
 
 use Carp;
+use Data::Validate::URI qw/is_uri/;
 use HTTP::Request ();
 use JSON::MaybeXS qw(JSON);
 use LWP::UserAgent;
 use PerlX::Maybe qw/maybe provided/;
-use Types::Standard qw/ArrayRef Enum HasMethods Maybe/;
+use Types::Standard qw/ArrayRef Enum HasMethods Maybe Str/;
 use Types::Common::Numeric qw/IntRange/;
-use Types::URI qw/Uri/;
 
 use OpenTracing::Implementation::DataDog::Utils qw(
     nano_seconds
@@ -169,9 +169,7 @@ precedence over any of the other settings.
 has agent_url => (
     is => 'ro',
     env_key => 'DD_TRACE_AGENT_URL',
-    default => undef,
-    should  => Maybe[Uri],
-    coerce  => 1,
+    should  => Maybe[Str->where( sub { is_uri($_) } )],
 );
 
 

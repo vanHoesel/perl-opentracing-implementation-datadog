@@ -54,7 +54,7 @@ use HTTP::Request ();
 use JSON::MaybeXS qw(JSON);
 use LWP::UserAgent;
 use PerlX::Maybe qw/maybe provided/;
-use Types::Standard qw/ArrayRef Enum HasMethods/;
+use Types::Standard qw/ArrayRef Enum HasMethods Maybe/;
 use Types::Common::Numeric qw/IntRange/;
 use Types::URI qw/Uri/;
 
@@ -170,7 +170,8 @@ has agent_url => (
     is => 'ro',
     env_key => 'DD_TRACE_AGENT_URL',
     default => undef,
-    should  => Uri,
+    should  => Maybe[Uri],
+    coerce  => 1,
 );
 
 

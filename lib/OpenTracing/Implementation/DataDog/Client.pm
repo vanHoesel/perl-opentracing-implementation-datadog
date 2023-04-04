@@ -614,7 +614,9 @@ sub _span_buffer_threshold_reached {
 #
 sub DEMOLISH {
     my ($self) = @_;
-    $self->_flush_span_buffer();    # send any leftover spans
+    
+    $self->_flush_span_buffer() if $self->_span_buffer_size(); # send leftovers
+    
     return;
 }
 

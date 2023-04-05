@@ -312,7 +312,24 @@ be serialised (using L<to_struct> and converted to JSON).
 
 =head3 Returns
 
-A boolean, that comes from L<< C<is_succes>|HTTP::Response#$r->is_success >>.
+=over
+
+=item C<undef>
+
+in case something went wrong during the HTTP-request or the client has been
+halted in any previous call.
+
+=item a positive int
+
+indicating the number of collected spans, in case this client has only buffered
+the span.
+
+=item a negative int
+
+indicating the number of flushed spans, in case the client has succesfully
+flushed the spans collected in the buffer.
+
+=back
 
 =cut
 

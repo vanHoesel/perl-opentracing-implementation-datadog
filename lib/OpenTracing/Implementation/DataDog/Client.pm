@@ -296,7 +296,7 @@ OpenTracing::Implementation::DataDog::Tracer>:
 
 This method gets called by the L<DataDog::Tracer|
 OpenTracing::Implementation::DataDog::Tracer> to send a L<Span> with its
-specific L<DataDog::SpanContext|OpenTracing::Implementation::DataDog::Tracer>.
+specific L<DataDog::SpanContext|OpenTracing::Implementation::DataDog::SpanContext>.
 
 This will typically get called during C<on_finish>.
 
@@ -306,7 +306,7 @@ This will typically get called during C<on_finish>.
 
 =item C<$span>
 
-A L<OpenTracing Span|OpenTracing::Interface::Span> compliant object, that will
+An L<OpenTracing Span|OpenTracing::Interface::Span> compliant object, that will
 be serialised (using L<to_struct> and converted to JSON).
 
 =back
@@ -591,6 +591,10 @@ sub _http_post_struct_as_json {
     my $self = shift;
     my $struct = shift;
     
+    return
+        if $self->_has_client_halted();
+    # this shouldn't be needed, but will happen on DEMOLISH & spans in buffer
+
     my $encoded_data = $self->_json_encode($struct);
     do { warn "$encoded_data\n" }
         if $ENV{OPENTRACING_DEBUG};

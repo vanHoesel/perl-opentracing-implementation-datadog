@@ -44,8 +44,9 @@ our $VERSION = 'v0.43.3';
 use English;
 
 use Moo;
+use Sub::HandlesVia;
+#   XXX Order matters: Sub::HandlesVia::Manual::WithMoo - Potential load order
 use MooX::Attribute::ENV;
-use MooX::HandlesVia;
 use MooX::ProtectedAttributes;
 use MooX::Should;
 
@@ -276,8 +277,8 @@ protected_has _client_halted => (
     default       => 0,
     handles_via   => 'Bool',
     handles       => {
-       _halt_client => 'set'
-    }
+        _halt_client => 'set'
+    },
 );
 
 
@@ -604,7 +605,7 @@ sub _http_post_struct_as_json {
         # was, this client will be halted, be it an error in the data send (XXX)
         # or a problem with the recipient tracing agent.
         #
-        $self->_halt_client() if $resp->is_error;
+        $self->_halt_client();
         warn sprintf "DataDog::Client being halted due to an error [%s]\n",
             $resp->status_line;
         return;

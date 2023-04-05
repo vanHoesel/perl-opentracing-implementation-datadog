@@ -320,12 +320,26 @@ sub send_span {
     my $self = shift;
     my $span = shift;
     
-    $self->_buffer_span($span);
+    return
+        if $self->_has_client_halted();
+    # do not add more spans to the buffer
     
-    return $self->_span_buffer_size()
+    my $new_span_buffer_size = $self->_buffer_span($span);
+    
+    return $new_span_buffer_size
+        unless ( $new_span_buffer_size // 0 ) > 0;
+    # this should be the number of spans in the buffer, should not be undef or 0
+    
+    return $new_span_buffer_size
         unless $self->_should_flush_span_buffer();
     
-    return $self->_flush_span_buffer();
+    my $flushed = $self->_flush_span_buffer();
+    
+    return
+        unless defined $flushed;
+    
+    return -$flushed
+    
 }
 
 

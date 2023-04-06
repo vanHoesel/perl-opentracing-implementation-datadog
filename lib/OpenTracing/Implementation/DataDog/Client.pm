@@ -255,17 +255,17 @@ has span_buffer_threshold => (
 
 
 protected_has _span_buffer => (
-   is          => 'rw',
-   isa         => ArrayRef,
-   init_args   => undef,
-   default     => sub { [] },
-   handles_via => 'Array',
-   handles     => {
-       _buffer_span         => 'push',
-       _span_buffer_size    => 'count',
-       _buffered_spans      => 'all',
-       _empty_span_buffer   => 'clear',
-   },
+    is          => 'rw',
+    isa         => ArrayRef,
+    init_args   => undef,
+    default     => sub { [] },
+    handles_via => 'Array',
+    handles     => {
+        _buffer_span         => 'push',
+        _span_buffer_size    => 'count',
+        _buffered_spans      => 'all',
+        _empty_span_buffer   => 'clear',
+    },
 );
 
 

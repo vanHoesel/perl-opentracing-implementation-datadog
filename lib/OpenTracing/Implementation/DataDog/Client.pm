@@ -44,8 +44,9 @@ our $VERSION = 'v0.43.3';
 use English;
 
 use Moo;
+use Sub::HandlesVia;
+#   XXX Order matters: Sub::HandlesVia::Manual::WithMoo - Potential load order
 use MooX::Attribute::ENV;
-use MooX::HandlesVia;
 use MooX::ProtectedAttributes;
 use MooX::Should;
 
@@ -55,7 +56,7 @@ use HTTP::Request ();
 use JSON::MaybeXS qw(JSON);
 use LWP::UserAgent;
 use PerlX::Maybe qw/maybe provided/;
-use Types::Standard qw/ArrayRef Enum HasMethods Maybe Str/;
+use Types::Standard qw/ArrayRef Bool Enum HasMethods Maybe Str/;
 use Types::Common::Numeric qw/IntRange/;
 
 use OpenTracing::Implementation::DataDog::Utils qw(
@@ -254,17 +255,30 @@ has span_buffer_threshold => (
 
 
 protected_has _span_buffer => (
-   is          => 'rw',
-   isa         => ArrayRef,
-   init_args   => undef,
-   default     => sub { [] },
-   handles_via => 'Array',
-   handles     => {
-       _buffer_span         => 'push',
-       _span_buffer_size    => 'count',
-       _buffered_spans      => 'all',
-       _empty_span_buffer   => 'clear',
-   },
+    is          => 'rw',
+    isa         => ArrayRef,
+    init_args   => undef,
+    default     => sub { [] },
+    handles_via => 'Array',
+    handles     => {
+        _buffer_span         => 'push',
+        _span_buffer_size    => 'count',
+        _buffered_spans      => 'all',
+        _empty_span_buffer   => 'clear',
+    },
+);
+
+
+
+protected_has _client_halted => (
+    is            => 'rw',
+    isa           => Bool,
+    reader        => '_has_client_halted',
+    default       => 0,
+    handles_via   => 'Bool',
+    handles       => {
+        _halt_client => 'set'
+    },
 );
 
 
@@ -282,7 +296,7 @@ OpenTracing::Implementation::DataDog::Tracer>:
 
 This method gets called by the L<DataDog::Tracer|
 OpenTracing::Implementation::DataDog::Tracer> to send a L<Span> with its
-specific L<DataDog::SpanContext|OpenTracing::Implementation::DataDog::Tracer>.
+specific L<DataDog::SpanContext|OpenTracing::Implementation::DataDog::SpanContext>.
 
 This will typically get called during C<on_finish>.
 
@@ -292,14 +306,31 @@ This will typically get called during C<on_finish>.
 
 =item C<$span>
 
-A L<OpenTracing Span|OpenTracing::Interface::Span> compliant object, that will
+An L<OpenTracing Span|OpenTracing::Interface::Span> compliant object, that will
 be serialised (using L<to_struct> and converted to JSON).
 
 =back
 
 =head3 Returns
 
-A boolean, that comes from L<< C<is_succes>|HTTP::Response#$r->is_success >>.
+=over
+
+=item C<undef>
+
+in case something went wrong during the HTTP-request or the client has been
+halted in any previous call.
+
+=item a positive int
+
+indicating the number of collected spans, in case this client has only buffered
+the span.
+
+=item a negative int
+
+indicating the number of flushed spans, in case the client has succesfully
+flushed the spans collected in the buffer.
+
+=back
 
 =cut
 
@@ -307,12 +338,26 @@ sub send_span {
     my $self = shift;
     my $span = shift;
     
-    $self->_buffer_span($span);
+    return
+        if $self->_has_client_halted();
+    # do not add more spans to the buffer
     
-    return $self->_span_buffer_size()
+    my $new_span_buffer_size = $self->_buffer_span($span);
+    
+    return $new_span_buffer_size
+        unless ( $new_span_buffer_size // 0 ) > 0;
+    # this should be the number of spans in the buffer, should not be undef or 0
+    
+    return $new_span_buffer_size
         unless $self->_should_flush_span_buffer();
     
-    return $self->_flush_span_buffer();
+    my $flushed = $self->_flush_span_buffer();
+    
+    return
+        unless defined $flushed;
+    
+    return -$flushed
+    
 }
 
 
@@ -501,10 +546,8 @@ sub _flush_span_buffer {
     
     my @structs = map {$self->to_struct($_) } $self->_buffered_spans();
     
-    my $resp = $self->_http_post_struct_as_json( [ \@structs ] );
-    
-    return
-        unless $resp->is_success;
+    my $resp = $self->_http_post_struct_as_json( [ \@structs ] )
+        or return;
     
     $self->_empty_span_buffer();
     
@@ -542,19 +585,35 @@ sub _http_headers_with_trace_count {
 #
 # It is the caller's responsibility to generate the correct data structure!
 #
-# Returns an HTTP::Response object, which may indicate a failure.
+# Maybe returns an HTTP::Response object, which may indicate a failure.
+#
 sub _http_post_struct_as_json {
     my $self = shift;
     my $struct = shift;
     
+    return
+        if $self->_has_client_halted();
+    # this shouldn't be needed, but will happen on DEMOLISH & spans in buffer
+
     my $encoded_data = $self->_json_encode($struct);
     do { warn "$encoded_data\n" }
         if $ENV{OPENTRACING_DEBUG};
     
     my @headers = $self->_http_headers_with_trace_count( scalar @{$struct->[0]} );
     my $rqst = HTTP::Request->new( 'POST', $self->uri, \@headers, $encoded_data );
-        
+    
     my $resp = $self->_send_http_request( $rqst );
+    if ( $resp->is_error ) {
+        #
+        # not interested in what the error actually has been, no matter what it
+        # was, this client will be halted, be it an error in the data send (XXX)
+        # or a problem with the recipient tracing agent.
+        #
+        $self->_halt_client();
+        warn sprintf "DataDog::Client being halted due to an error [%s]\n",
+            $resp->status_line;
+        return;
+    }
     
     return $resp;
 }

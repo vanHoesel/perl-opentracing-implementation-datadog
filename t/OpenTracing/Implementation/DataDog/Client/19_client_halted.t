@@ -51,9 +51,10 @@ subtest "Create a span and capture the request" => sub {
     } "Did 'send_span' 3";
     is $send_span_result, +1, "... which still collects spans";
     
-    lives_ok {
+    warning_like {
         $send_span_result = $datadog_client->send_span( $test_span )
-    } "Did 'send_span' 4";
+    } qr /^DataDog::Client being halted due to an error \[.*\]$/
+    , "Did 'send_span' 4 ... with a 'DataDog::Client error'";
     ok !defined($send_span_result), "... which failed to flush the buffer";
     
     is scalar $http_user_agent->get_all_requests(), 2,

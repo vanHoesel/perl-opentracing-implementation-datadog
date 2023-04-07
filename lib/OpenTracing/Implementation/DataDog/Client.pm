@@ -461,7 +461,8 @@ sub to_struct {
         maybe
         parent_id => $span->get_parent_span_id(),
         
-#       error     => ... ,
+        provided _is_with_errors( $span ),
+        error     => 1,
         
         provided %meta_data,
         meta      => { %meta_data },
@@ -552,6 +553,15 @@ sub _flush_span_buffer {
     $self->_empty_span_buffer();
     
     return scalar @structs;
+}
+
+
+
+# checks if there is an exisiting 'error' tag
+#
+sub _is_with_errors {
+    my $span = shift;
+    return exists { $span->get_tags() }->{ error }
 }
 
 

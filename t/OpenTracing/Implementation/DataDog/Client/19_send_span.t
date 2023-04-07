@@ -44,8 +44,16 @@ subtest "Create a span and capture the request" => sub {
     or return;
     
     lives_ok {
+        $test_span->add_tags(
+            error   => 1,
+        );
+    } "Did set it to an error state"
+    
+    or return;
+    
+    lives_ok {
         $test_span->finish( 83.500 );
-    } " Did finish the 'test_span'"
+    } "Did finish the 'test_span'"
     
     or return;
     
@@ -113,12 +121,14 @@ subtest "Create a span and capture the request" => sub {
                     start       => 52750000000,
                     trace_id    => 87359,
                     type        => "custom",
+                    error       => 1
                 }
             ]
         ],
         "... and most importanly, did send of the right JSON string"
     );
     
+    explain $struct;
 };
 
 done_testing();

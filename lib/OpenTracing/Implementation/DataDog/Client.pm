@@ -430,7 +430,7 @@ sub to_struct {
     my $context = $span->get_context();
     
     my %meta_data = (
-        $span->get_tags,
+        _fixup_span_tags( $span->get_tags ),
         $context->get_baggage_items,
     );
     
@@ -532,6 +532,20 @@ For details, see the full text of the license in the file LICENSE.
 
 
 =cut
+
+
+# _fixup_span_tags
+#
+# rename and or remove key value pairs from standard OpenTracing to what
+# DataDog expects to be send
+#
+sub _fixup_span_tags {
+    my %tags = @_;
+    
+    my $error = delete $tags { error };
+    
+    return %tags;
+}
 
 
 

@@ -544,6 +544,12 @@ sub _fixup_span_tags {
     
     my $error = delete $tags { error };
     
+    $tags { 'error.type'    } = delete $tags{ 'error.kind' }
+        if $error;
+    
+    $tags { 'error.message' } = delete $tags{ 'message' }
+        if $error;
+    
     return %tags;
 }
 

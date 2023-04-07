@@ -45,7 +45,9 @@ subtest "Create a span and capture the request" => sub {
     
     lives_ok {
         $test_span->add_tags(
-            error   => 1,
+            error        => 1,
+            message      => 'This is a simple test',
+            'error.kind' => 'TestError',
         );
     } "Did set it to an error state"
     
@@ -108,10 +110,12 @@ subtest "Create a span and capture the request" => sub {
                 {
                     duration    => 30750000000,
                     meta        => {
-                        bar         => 2,
-                        baz         => 3,
-                        foo         => 1,
-                        qux         => 4,
+                        bar             => 2,
+                        baz             => 3,
+                        foo             => 1,
+                        qux             => 4,
+                        'error.type'    => 'TestError',
+                        'error.message' => 'This is a simple test',
                     },
                     name        => "oprt name",
                     parent_id   => 54365,
@@ -121,7 +125,7 @@ subtest "Create a span and capture the request" => sub {
                     start       => 52750000000,
                     trace_id    => 87359,
                     type        => "custom",
-                    error       => 1
+                    error       => 1,
                 }
             ]
         ],

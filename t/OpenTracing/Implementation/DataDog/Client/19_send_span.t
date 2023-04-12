@@ -44,8 +44,18 @@ subtest "Create a span and capture the request" => sub {
     or return;
     
     lives_ok {
+        $test_span->add_tags(
+            error        => 1,
+            message      => 'This is a simple test',
+            'error.kind' => 'TestError',
+        );
+    } "Did set it to an error state"
+    
+    or return;
+    
+    lives_ok {
         $test_span->finish( 83.500 );
-    } " Did finish the 'test_span'"
+    } "Did finish the 'test_span'"
     
     or return;
     
@@ -100,10 +110,12 @@ subtest "Create a span and capture the request" => sub {
                 {
                     duration    => 30750000000,
                     meta        => {
-                        bar         => 2,
-                        baz         => 3,
-                        foo         => 1,
-                        qux         => 4,
+                        bar             => "2",
+                        baz             => "3",
+                        foo             => "1",
+                        qux             => "4",
+                        'error.type'    => 'TestError',
+                        'error.message' => 'This is a simple test',
                     },
                     name        => "oprt name",
                     parent_id   => 54365,
@@ -113,12 +125,16 @@ subtest "Create a span and capture the request" => sub {
                     start       => 52750000000,
                     trace_id    => 87359,
                     type        => "custom",
+                    error       => 1,
                 }
             ]
         ],
         "... and most importanly, did send of the right JSON string"
     );
     
+    my @matches = $content =~ m/"meta" : \{(?:[\s\w\"\,\:\.]*)("foo" : "1")(?:[\s\w\"\,\:\.]*)\},/mg;
+    is @matches[0], '"foo" : "1"',
+        "... and numbers in 'meta section are double quoted too"
 };
 
 done_testing();

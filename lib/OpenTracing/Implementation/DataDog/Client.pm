@@ -430,7 +430,7 @@ sub to_struct {
     my $context = $span->get_context();
     
     my %meta_data = (
-        $span->get_tags,
+        _fixup_span_tags( $span->get_tags ),
         $context->get_baggage_items,
     );
     
@@ -461,7 +461,8 @@ sub to_struct {
         maybe
         parent_id => $span->get_parent_span_id(),
         
-#       error     => ... ,
+        provided _is_with_errors( $span ),
+        error     => 1,
         
         provided %meta_data,
         meta      => { %meta_data },
@@ -533,6 +534,26 @@ For details, see the full text of the license in the file LICENSE.
 =cut
 
 
+# _fixup_span_tags
+#
+# rename and or remove key value pairs from standard OpenTracing to what
+# DataDog expects to be send
+#
+sub _fixup_span_tags {
+    my %tags = @_;
+    
+    my $error = delete $tags { error };
+    
+    $tags { 'error.type'    } = delete $tags{ 'error.kind' }
+        if $error;
+    
+    $tags { 'error.message' } = delete $tags{ 'message' }
+        if $error;
+    
+    return %tags;
+}
+
+
 
 # _flush_span_buffer
 #
@@ -552,6 +573,15 @@ sub _flush_span_buffer {
     $self->_empty_span_buffer();
     
     return scalar @structs;
+}
+
+
+
+# checks if there is an exisiting 'error' tag
+#
+sub _is_with_errors {
+    my $span = shift;
+    return exists { $span->get_tags() }->{ error }
 }
 
 

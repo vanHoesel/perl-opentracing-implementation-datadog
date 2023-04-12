@@ -1,7 +1,16 @@
 CHANGE LOG
 ==========
 
+
+2023-04-12 - v0.45.0
+--------------------
+
+### Added
+  - now supports sending errors as expected by DataDog
+
+
 2023-04-06 - v0.44.0
+--------------------
 
 ### Added
   - now uses a span-buffer to collect spans and flush together

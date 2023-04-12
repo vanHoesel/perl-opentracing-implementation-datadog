@@ -132,9 +132,11 @@ subtest "Create a span and capture the request" => sub {
         "... and most importanly, did send of the right JSON string"
     );
     
+    # if only cmp_deeply would be strict on SV and not be lax for numbers
+    
     my @matches = $content =~ m/"meta" : \{(?:[\s\w\"\,\:\.]*)("foo" : "1")(?:[\s\w\"\,\:\.]*)\},/mg;
-    is @matches[0], '"foo" : "1"',
-        "... and numbers in 'meta section are double quoted too"
+    is $matches[0], '"foo" : "1"',
+        "... and numbers in 'meta object' are double quoted too"
 };
 
 done_testing();

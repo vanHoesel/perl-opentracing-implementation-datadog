@@ -110,10 +110,10 @@ subtest "Create a span and capture the request" => sub {
                 {
                     duration    => 30750000000,
                     meta        => {
-                        bar             => 2,
-                        baz             => 3,
-                        foo             => 1,
-                        qux             => 4,
+                        bar             => "2",
+                        baz             => "3",
+                        foo             => "1",
+                        qux             => "4",
                         'error.type'    => 'TestError',
                         'error.message' => 'This is a simple test',
                     },
@@ -132,7 +132,9 @@ subtest "Create a span and capture the request" => sub {
         "... and most importanly, did send of the right JSON string"
     );
     
-    explain $struct;
+    my @matches = $content =~ m/"meta" : \{(?:[\s\w\"\,\:\.]*)("foo" : "1")(?:[\s\w\"\,\:\.]*)\},/mg;
+    is @matches[0], '"foo" : "1"',
+        "... and numbers in 'meta section are double quoted too"
 };
 
 done_testing();

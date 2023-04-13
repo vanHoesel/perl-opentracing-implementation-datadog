@@ -39,7 +39,7 @@ agent.
 
 
 
-our $VERSION = 'v0.45.0';
+our $VERSION = 'v0.45.1';
 
 use English;
 
@@ -408,7 +408,7 @@ a hashreference with the following keys:
 
 =item C<parent_id> (optional)
 
-=item C<error> (TODO)
+=item C<error>
 
 =item C<meta> (optional)
 

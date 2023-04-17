@@ -173,6 +173,15 @@ has agent_url => (
     should  => Maybe[Str->where( sub { is_uri($_) } )],
 );
 
+=pod
+
+NOTE: DataDog Agents can also listen to a UNiX socket, and one is suggested that
+there is a C<unix:> URL. Fist of all, that is false, the C<unix:> scheme is just
+non existent. It should be C<file:> instead. Secondly, this L<Client> just does
+not support it, only C<http:> or C<https:>
+
+=cut
+
 
 
 has uri => (

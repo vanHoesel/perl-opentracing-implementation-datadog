@@ -2,7 +2,6 @@ requires        "OpenTracing::Role", '>= v0.86.0';
 requires        "OpenTracing::Implementation", '0.03';
 
 requires        "Carp";
-requires        "Data::Validate::URI";
 requires        "Exporter";
 requires        "Hash::Merge";
 requires        "HTTP::Request";
@@ -17,6 +16,8 @@ requires        "MooX::ProtectedAttributes";
 requires        "MooX::Should", '>=v0.1.4';
 requires        "PerlX::Maybe";
 requires        "Ref::Util";
+requires        "Regexp::Common";
+requires        "Regexp::Common::URI::http";
 requires        "Sub::HandlesVia";
 requires        "Sub::Trigger::Lock";
 requires        "Syntax::Feature::Maybe";

@@ -170,7 +170,7 @@ precedence over any of the other settings.
 has agent_url => (
     is => 'ro',
     env_key => 'DD_TRACE_AGENT_URL',
-    should  => Maybe[Str->where( sub { is_uri($_) } )],
+    should  => Maybe[Str->where( sub { _is_uri($_) } )],
 );
 
 =pod
@@ -595,11 +595,11 @@ sub _is_with_errors {
 
 
 
-# is_uri
+# _is_uri
 #
 # Returns true if the given string matches an http(s) url
 #
-sub is_uri {
+sub _is_uri {
     return $RE{URI}{HTTP}{-scheme => 'https?'}->matches(shift)
     # scheme must be specified, defaults to 'http:'
 }

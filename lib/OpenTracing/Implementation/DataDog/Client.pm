@@ -51,11 +51,11 @@ use MooX::ProtectedAttributes;
 use MooX::Should;
 
 use Carp;
-use Data::Validate::URI qw/is_uri/;
 use HTTP::Request ();
 use JSON::MaybeXS qw(JSON);
 use LWP::UserAgent;
 use PerlX::Maybe qw/maybe provided/;
+use Regexp::Common qw/URI/;
 use Types::Standard qw/ArrayRef Bool Enum HasMethods Maybe Str/;
 use Types::Common::Numeric qw/IntRange/;
 
@@ -582,6 +582,17 @@ sub _flush_span_buffer {
 sub _is_with_errors {
     my $span = shift;
     return exists { $span->get_tags() }->{ error }
+}
+
+
+
+# is_uri
+#
+# Returns true if the given string matches an http(s) url
+#
+sub is_uri {
+    return $RE{URI}{HTTP}{-scheme => 'https?'}->matches(shift)
+    # scheme must be specified, defaults to 'http:'
 }
 
 

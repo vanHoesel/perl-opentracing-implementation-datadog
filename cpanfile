@@ -8,6 +8,7 @@ requires        "HTTP::Request";
 requires        "HTTP::Response::Maker";
 requires        "JSON::MaybeXS";
 requires        "LWP::UserAgent";
+requires        "Math::BigInt::Random::OO";
 requires        "Moo";
 requires        "Moo::Role";
 requires        "MooX::Attribute::ENV", '>= 0.04';

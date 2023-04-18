@@ -27,7 +27,7 @@ This version is for
 
 =head1 SYNOPSIS
 
-    use alias "OpenTracing::Implementation::DataDog", 'Implementation';
+    use aliased "OpenTracing::Implementation::DataDog", 'Implementation';
     
     my $tracer = Implementation->bootstrap_tracer(
         agent => {

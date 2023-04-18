@@ -31,7 +31,7 @@ Under the hood, this is just a nice abstract way to deal with a C<Math::BigInt>.
 
 
 
-our $VERSION = 'v0.45.1';
+our $VERSION = 'v0.46.0';
 
 
 use parent 'Math::BigInt';

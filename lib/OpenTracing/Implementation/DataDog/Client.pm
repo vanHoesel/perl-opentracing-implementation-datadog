@@ -39,7 +39,7 @@ agent.
 
 
 
-our $VERSION = 'v0.45.1';
+our $VERSION = 'v0.46.0';
 
 use English;
 

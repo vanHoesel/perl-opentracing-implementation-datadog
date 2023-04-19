@@ -38,7 +38,7 @@ use OpenTracing::Implementation::DataDog::ID qw/random_datadog_id/;
 
 use Sub::Trigger::Lock;
 use Types::Common::String qw/NonEmptyStr/;
-use Types::Standard qw/InstanceOf/; # by lack of Types::BigNum
+use Types::Standard qw/InstanceOf Maybe/;
 
 
 
@@ -160,7 +160,7 @@ An optional C<NonEmptyString> where C<length <= 5000>.
 
 has environment => (
     is              => 'ro',
-    should          => NonEmptyStr->where( 'length($_) <= 5000' ),
+    should          => Maybe[NonEmptyStr->where( 'length($_) <= 5000' )],
     required        => 0,
     env_key         => 'DD_ENV',
     reader          => 'get_environment',
@@ -177,10 +177,27 @@ An optional C<NonEmptyString> where C<length <= 5000>.
 
 has hostname => (
     is              => 'ro',
-    should          => NonEmptyStr->where( 'length($_) <= 5000' ),
+    should          => Maybe[NonEmptyStr->where( 'length($_) <= 5000' )],
     required        => 0,
     env_key         => 'DD_HOSTNAME',
     reader          => 'get_hostname',
+    trigger         => Lock,
+);
+
+
+
+=head2 C<version>
+
+An optional C<NonEmptyString> where C<length <= 5000>.
+
+=cut
+
+has version => (
+    is              => 'ro',
+    should          => Maybe[NonEmptyStr->where( 'length($_) <= 5000' )],
+    required        => 0,
+    env_key         => 'DD_VERSION',
+    reader          => 'get_version',
     trigger         => Lock,
 );
 
@@ -373,6 +390,32 @@ A cloned C<DataDog::SpanContext>
 =cut
 
 sub with_hostname { $_[0]->clone_with( hostname => $_[1] ) }
+
+
+
+=head2 C<with_version>
+
+Creates a cloned object, with a new value for C<hostname>.
+
+    $span_context_new = $root_span->with_version( 'v0.123.456' );
+
+=head3 Required Positional Parameter(s)
+
+=over
+
+=item C<version>
+
+A C<NonEmptyString> where C<length <= 5000>.
+
+=back
+
+=head3 Returns
+
+A cloned C<DataDog::SpanContext>
+
+=cut
+
+sub with_version { $_[0]->clone_with( version => $_[1] ) }
 
 
 

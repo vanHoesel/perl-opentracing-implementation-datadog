@@ -419,6 +419,45 @@ sub with_version { $_[0]->clone_with( version => $_[1] ) }
 
 
 
+=head1 ENVIRONMENT VARIABLES
+
+For configuring DataDog Tracing there is support for the folllowing environment
+variables:
+
+
+
+=head2 C<DD_SERVICE_NAME>
+
+The name of a set of processes that do the same job. Used for grouping stats for
+your application.
+
+B<default:> I<none>
+
+
+
+=head2 C<DD_ENV>
+
+Your application environment (for example, production, staging).
+
+B<default:> I<none>
+
+
+
+=head2 C<DD_HOSTNAME>
+
+Manually set the hostname to use for metrics if autodetection fails, or when
+running the Datadog Cluster Agent.
+
+
+
+=head2 C<DD_VERSION>
+
+Your application version (for example, 2.5, 202003181415, 1.3-alpha).
+
+B<default:> I<none>
+
+
+
 =head1 SEE ALSO
 
 =over

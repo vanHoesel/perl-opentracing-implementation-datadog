@@ -393,6 +393,32 @@ sub with_hostname { $_[0]->clone_with( hostname => $_[1] ) }
 
 
 
+=head2 C<with_version>
+
+Creates a cloned object, with a new value for C<hostname>.
+
+    $span_context_new = $root_span->with_version( 'v0.123.456' );
+
+=head3 Required Positional Parameter(s)
+
+=over
+
+=item C<version>
+
+A C<NonEmptyString> where C<length <= 5000>.
+
+=back
+
+=head3 Returns
+
+A cloned C<DataDog::SpanContext>
+
+=cut
+
+sub with_version { $_[0]->clone_with( version => $_[1] ) }
+
+
+
 =head1 SEE ALSO
 
 =over

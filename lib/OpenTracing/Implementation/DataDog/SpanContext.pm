@@ -104,7 +104,7 @@ be set by a intergration solution.
 
 has service_name => (
     is              => 'ro',
-    env_key         => 'DD_SERVICE_NAME',
+    env_key         => [ 'DD_SERVICE', 'DD_SERVICE_NAME' ], # only DD_SERVICE!!
     required        => 1,
     should          => NonEmptyStr->where( 'length($_) <= 100' ),
     reader          => 'get_service_name',

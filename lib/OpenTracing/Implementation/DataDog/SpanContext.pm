@@ -38,7 +38,7 @@ use OpenTracing::Implementation::DataDog::ID qw/random_datadog_id/;
 
 use Sub::Trigger::Lock;
 use Types::Common::String qw/NonEmptyStr/;
-use Types::Standard qw/InstanceOf/; # by lack of Types::BigNum
+use Types::Standard qw/InstanceOf Maybe/;
 
 
 
@@ -160,7 +160,7 @@ An optional C<NonEmptyString> where C<length <= 5000>.
 
 has environment => (
     is              => 'ro',
-    should          => NonEmptyStr->where( 'length($_) <= 5000' ),
+    should          => Maybe[NonEmptyStr->where( 'length($_) <= 5000' )],
     required        => 0,
     env_key         => 'DD_ENV',
     reader          => 'get_environment',
@@ -177,7 +177,7 @@ An optional C<NonEmptyString> where C<length <= 5000>.
 
 has hostname => (
     is              => 'ro',
-    should          => NonEmptyStr->where( 'length($_) <= 5000' ),
+    should          => Maybe[NonEmptyStr->where( 'length($_) <= 5000' )],
     required        => 0,
     env_key         => 'DD_HOSTNAME',
     reader          => 'get_hostname',
@@ -194,7 +194,7 @@ An optional C<NonEmptyString> where C<length <= 5000>.
 
 has version => (
     is              => 'ro',
-    should          => NonEmptyStr->where( 'length($_) <= 5000' ),
+    should          => Maybe[NonEmptyStr->where( 'length($_) <= 5000' )],
     required        => 0,
     env_key         => 'DD_VERSION',
     reader          => 'get_version',

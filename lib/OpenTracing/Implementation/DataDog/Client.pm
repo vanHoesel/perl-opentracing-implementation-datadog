@@ -463,6 +463,9 @@ sub to_struct {
         maybe
         hostname  => $context->get_hostname,
         
+        maybe
+        version   => $context->get_version,
+        
         name      => $span->get_operation_name,
         start     => nano_seconds( $span->start_time() ),
         duration  => nano_seconds( $span->duration() ),

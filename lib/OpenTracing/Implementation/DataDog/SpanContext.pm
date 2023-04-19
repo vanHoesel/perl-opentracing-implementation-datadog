@@ -186,6 +186,23 @@ has hostname => (
 
 
 
+=head2 C<version>
+
+An optional C<NonEmptyString> where C<length <= 5000>.
+
+=cut
+
+has version => (
+    is              => 'ro',
+    should          => NonEmptyStr->where( 'length($_) <= 5000' ),
+    required        => 0,
+    env_key         => 'DD_VERSION',
+    reader          => 'get_version',
+    trigger         => Lock,
+);
+
+
+
 =head1 CONSTRUCTORS
 
 =head2 Warning:

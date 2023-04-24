@@ -231,7 +231,7 @@ has _json_encoder => (
 );
 
 sub _build__json_encoder {
-    JSON()->new->utf8->canonical->pretty->convert_blessed()
+    JSON()->new->utf8->canonical->pretty->allow_bignum
 }
 #
 # I just love readable and consistant JSONs

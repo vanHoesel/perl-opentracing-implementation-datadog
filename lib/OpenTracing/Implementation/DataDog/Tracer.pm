@@ -51,6 +51,11 @@ use Hash::Merge;
 use Ref::Util qw/is_plain_hashref/;
 use Types::Standard qw/Object Str/;
 
+use constant {
+    HTTP_HEADER_TRACE_ID => "x-datadog-trace-id",
+    HTTP_HEADER_SPAN_ID  => "x-datadog-parent-id",
+};
+
 
 
 =head1 DESCRIPTION
@@ -269,10 +274,28 @@ sub inject_context_into_hash_reference   {
 
 
 
-sub inject_context_into_http_headers     { return $_[1] } # $carrier
+sub inject_context_into_http_headers {
+    my ($self, $carrier, $context) = @_;
+
+    $carrier->header(HTTP_HEADER_TRACE_ID, $context->trace_id);
+    $carrier->header(HTTP_HEADER_SPAN_ID, $context->span_id);
+
+    return $carrier;
+}
+
 sub extract_context_from_array_reference { return undef }
 sub extract_context_from_hash_reference  { return undef }
-sub extract_context_from_http_headers    { return undef }
+
+sub extract_context_from_http_headers {
+    my ($self, $carrier) = @_;
+    my $trace_id = $carrier->header(HTTP_HEADER_TRACE_ID);
+    my $span_id  = $carrier->header(HTTP_HEADER_SPAN_ID);
+    return unless defined $trace_id and defined $span_id;
+
+    return $self->build_context()
+                ->with_trace_id($trace_id)
+                ->with_span_id($span_id);
+}
 
 =head1 SEE ALSO
 

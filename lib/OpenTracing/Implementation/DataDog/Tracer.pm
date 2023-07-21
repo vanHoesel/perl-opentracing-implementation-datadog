@@ -276,6 +276,7 @@ sub inject_context_into_hash_reference   {
 
 sub inject_context_into_http_headers {
     my ($self, $carrier, $context) = @_;
+    $carrier = $carrier->clone;
 
     $carrier->header(HTTP_HEADER_TRACE_ID, $context->trace_id);
     $carrier->header(HTTP_HEADER_SPAN_ID, $context->span_id);

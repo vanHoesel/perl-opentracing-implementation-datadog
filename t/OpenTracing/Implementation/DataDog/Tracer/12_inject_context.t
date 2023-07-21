@@ -73,6 +73,7 @@ subtest 'Carrier as HTTP headers' => sub {
         first  => 'foo',
         second => 'bar',
     );
+    my $original_str = $original_carrier->as_string;
     
     my $injected_carrier;
     lives_ok {
@@ -89,6 +90,8 @@ subtest 'Carrier as HTTP headers' => sub {
         'trace id injected';
     is $injected_carrier->header('x-datadog-parent-id'), $context->span_id,
         'span id injected';
+
+    is $original_carrier->as_string, $original_str, "original carrier intact";
 };
 
 done_testing();

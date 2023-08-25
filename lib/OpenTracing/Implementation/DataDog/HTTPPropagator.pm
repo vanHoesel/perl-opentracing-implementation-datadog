@@ -3,6 +3,7 @@ package OpenTracing::Implementation::DataDog::HTTPPropagator;
 use strict;
 use warnings;
 use Moo;
+use MooX::Attribute::ENV;
 use Carp qw[ croak ];
 
 use constant {
@@ -21,22 +22,22 @@ my %styles = (
     STYLE_NONE       ,=> 'OpenTracing::Implementation::DataDog::Propagator::NoOp',
 );
 
-has style_extract => (
+has _style_extract => (
     is      => 'ro',
-    default => sub {
-          $ENV{DD_TRACE_PROPAGATION_STYLE_EXTRACT}
-       // $ENV{DD_TRACE_PROPAGATION_STYLE}
-       // STYLE_DATADOG
-    },
+    default => STYLE_DATADOG,
+    env_key => [
+        'DD_TRACE_PROPAGATION_STYLE_EXTRACT',
+        'DD_TRACE_PROPAGATION_STYLE',
+    ],
 );
 
-has style_inject => (
+has _style_inject => (
     is      => 'ro',
-    default => sub {
-          $ENV{DD_TRACE_PROPAGATION_STYLE_INJECT}
-       // $ENV{DD_TRACE_PROPAGATION_STYLE}
-       // STYLE_DATADOG
-    },
+    default => STYLE_DATADOG,
+    env_key => [
+        'DD_TRACE_PROPAGATION_STYLE_INJECT',
+        'DD_TRACE_PROPAGATION_STYLE',
+    ],
 );
 
 has extractor => (
@@ -44,7 +45,7 @@ has extractor => (
     handles => [qw/extract/],
     default => sub {
         my ($self) = @_;
-        $self->make_propagator($self->style_extract);
+        $self->make_propagator($self->_style_extract);
     },
 );
 
@@ -53,7 +54,7 @@ has injector => (
     handles => [qw/inject/],
     default => sub {
         my ($self) = @_;
-        $self->make_propagator($self->style_inject);
+        $self->make_propagator($self->_style_inject);
     },
 );
 

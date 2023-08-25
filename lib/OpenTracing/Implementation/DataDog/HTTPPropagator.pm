@@ -61,6 +61,7 @@ has injector => (
 sub make_propagator {
     my ($self, $style) = @_;
     my @propagators = map { $_->new } map {
+        s/\A\s*|\s*\z//g;
         $styles{$_} // croak "Unsupported propagation style: $_"
     } split ',', $style;
     return $propagators[0] if @propagators == 1;

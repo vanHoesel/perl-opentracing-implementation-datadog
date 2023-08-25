@@ -65,6 +65,15 @@ my @cases = (
         },
     },
     {
+        style    => ' datadog,   b3multi ', # extra whitespace and double style
+        trace_id => '5611920385980137472',
+        span_id  => '8888811111122222200',
+        headers  => {
+            "x-b3-traceid" => '5611920385980137472',
+            "x-b3-spanid"  => '8888811111122222200',
+        },
+    },
+    {
         style    => 'tracecontext',
         trace_id => '5611920385980137472',
         span_id  => '8888811111122222200',

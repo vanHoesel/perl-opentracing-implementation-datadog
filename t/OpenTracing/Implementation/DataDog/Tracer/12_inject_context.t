@@ -145,6 +145,20 @@ my @cases = (
         span_id  => '8888811111122222200',
         headers  => {},    # just verify the original carrier is intact
     },
+    {
+        style    => 'datadog,b3 single header,b3multi,tracecontext',
+        trace_id => '5611920385980137472',
+        span_id  => '8888811111122222200',
+        headers => {
+            "x-datadog-trace-id"  => '5611920385980137472',
+            "x-datadog-parent-id" => '8888811111122222200',
+
+            "b3"           => '5611920385980137472-8888811111122222200',
+            "x-b3-traceid" => '5611920385980137472',
+            "x-b3-spanid"  => '8888811111122222200',
+            "traceparent"  => '00-00000000000000004de18bdb9a1e8000-7b5b669c51fc3c78-00',
+        },
+    },
 );
 
 foreach my $case (@cases) {

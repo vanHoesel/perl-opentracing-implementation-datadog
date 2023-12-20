@@ -443,9 +443,11 @@ sub to_struct {
         $context->get_baggage_items,
     );
     
-    # fix issue with meta-data, values must be string!
+    # fix issue with meta-data, values must be string!, and just skip undefined
     %meta_data =
-        map { $_ => "$meta_data{$_}" } keys %meta_data
+        map {
+            defined $meta_data{$_} ? ( $_ => "$meta_data{$_}" ) : ()
+        } keys %meta_data
     if %meta_data;
     
     my $data = {

@@ -1,0 +1,43 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use HTTP::Daemon;
+use HTTP::Status qw/:constants/;
+use JSON::MaybeXS;
+use DDP;
+
+# Determine the port for HTTP server
+my $http_port = $ENV{DD_TRACE_AGENT_PORT} || 8126;
+
+# Create HTTP daemon
+my $d = HTTP::Daemon->new(
+    LocalAddr => 'localhost',
+    LocalPort => $http_port,
+    ReuseAddr => 1,
+) || die "Failed to create HTTP::Daemon instance: $!";
+
+print "Server running at: ", $d->url, "\n";
+
+while (my $c = $d->accept) {
+    while (my $r = $c->get_request) {
+        use DDP; p $r;
+        if ($r->method eq 'POST') {
+            my $content = $r->content;
+            my $json;
+            eval {
+                $json = decode_json($content);
+            };
+            if ($@) {
+                $c->send_error(HTTP_BAD_REQUEST);
+            } else {
+                p $json;
+                $c->send_response(HTTP_NO_CONTENT);
+            }
+        } else {
+            $c->send_error(HTTP_METHOD_NOT_ALLOWED);
+        }
+    }
+    $c->close;
+    undef($c);
+}
